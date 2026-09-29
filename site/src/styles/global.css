@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+/*
+  Design tokens — extraits du faire-part physique (Support/DORVILMA MEYRE FAIRE PART.pdf).
+  Voir la direction artistique validée pour le détail de chaque couleur.
+*/
+@theme {
+  --color-sauge: #8B9A7D;
+  --color-sauge-deep: #6F7E63;
+  --color-or: #C9A45C;
+  --color-or-clair: #D8BD84;
+  --color-vert-chateau: #2E4635;
+  --color-kraft: #EAE2D2;
+  --color-ivoire: #FBF9F4;
+  --color-ardoise: #3A3A34;
+  --color-gris-piste: #C9C7BE;
+
+  --font-script: "Parisienne", cursive;
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
+
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-draw: draw 1.6s ease-out forwards;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.55; }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background: var(--color-ivoire);
+  color: var(--color-ardoise);
+  font-family: var(--font-sans);
+}
+
+/* Classes below are in @layer components so that Tailwind utility classes
+   (e.g. px-5, py-2.5 on a .btn usage) always win over these defaults. */
+@layer components {
+  .eyebrow {
+    font-family: var(--font-serif);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ---------- reveal-on-scroll ----------
+     Base state hides + offsets; JS toggles .is-visible. Variants change the offset/shape.
+     Everything stays visible without JS (.no-js) and is inert under reduced motion. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal.is-visible { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
+
+  .reveal--scale { transform: translateY(16px) scale(0.94); }
+  .reveal--left { transform: translateX(-36px); }
+  .reveal--right { transform: translateX(36px); }
+  .reveal--zoom { transform: scale(1.08); transition-duration: 1.1s; }
+  .reveal--zoom.is-visible { transform: scale(1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+  .no-js .reveal { opacity: 1; transform: none; }
+
+  /* hero-enter: staggered entrance for above-the-fold content (no scroll trigger needed) */
+  .hero-enter {
+    opacity: 0;
+    animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .no-js .hero-enter { opacity: 1; animation: none; transform: none; }
+
+  /* ---------- grain: subtle photographic warmth on flat colour sections ---------- */
+  .texture-grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .texture-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index: 1;
+  }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    padding: 1rem 1.75rem;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+    will-change: transform;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-solid {
+    background: var(--color-or);
+    color: var(--color-vert-chateau);
+  }
+  .btn-solid:hover {
+    background: var(--color-or-clair);
+    box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--color-or) 60%, transparent);
+  }
+
+  .btn-outline {
+    border: 1px solid currentColor;
+    background: transparent;
+  }
+  .btn-outline:hover {
+    box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .btn:hover { transform: none; transition: background-color 0.2s, color 0.2s; }
+  }
+
+  /* ---------- cards ---------- */
+  .card-lift {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 34px -20px rgba(46, 70, 53, 0.35);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-lift:hover { transform: none; }
+  }
+
+  /* ---------- nav underline ---------- */
+  .nav-underline {
+    position: relative;
+  }
+  .nav-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-underline:hover::after { transform: scaleX(1); transform-origin: left; }
+}

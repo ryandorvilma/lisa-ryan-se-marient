@@ -1,0 +1,80 @@
+---
+import site from "../data/site.json";
+---
+
+<div
+  class="countdown flex gap-3 sm:gap-4 justify-center w-fit mx-auto"
+  data-target={site.weddingDateISO}
+  role="timer"
+  aria-live="off"
+>
+  <div class="flex flex-col items-center gap-1 rounded-sm bg-ivoire/90 px-3 py-2 min-w-[58px] overflow-hidden">
+    <span class="tick-value text-lg sm:text-xl font-serif text-vert-chateau tabular-nums" data-unit="days">—</span>
+    <span class="text-[10px] tracking-wide text-ardoise/70">jours</span>
+  </div>
+  <div class="flex flex-col items-center gap-1 rounded-sm bg-ivoire/90 px-3 py-2 min-w-[58px] overflow-hidden">
+    <span class="tick-value text-lg sm:text-xl font-serif text-vert-chateau tabular-nums" data-unit="hours">—</span>
+    <span class="text-[10px] tracking-wide text-ardoise/70">heures</span>
+  </div>
+  <div class="flex flex-col items-center gap-1 rounded-sm bg-ivoire/90 px-3 py-2 min-w-[58px] overflow-hidden">
+    <span class="tick-value text-lg sm:text-xl font-serif text-vert-chateau tabular-nums" data-unit="minutes">—</span>
+    <span class="text-[10px] tracking-wide text-ardoise/70">minutes</span>
+  </div>
+  <div class="flex flex-col items-center gap-1 rounded-sm bg-ivoire/90 px-3 py-2 min-w-[58px] overflow-hidden">
+    <span class="tick-value text-lg sm:text-xl font-serif text-vert-chateau tabular-nums" data-unit="seconds">—</span>
+    <span class="text-[10px] tracking-wide text-ardoise/70">secondes</span>
+  </div>
+</div>
+
+<style>
+  .tick-value { display: inline-block; }
+  .tick-value.is-ticking { animation: tick-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+  @keyframes tick-pop {
+    0% { transform: translateY(-100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tick-value.is-ticking { animation: none; }
+  }
+</style>
+
+<script>
+  function initCountdowns() {
+    document.querySelectorAll<HTMLElement>(".countdown[data-target]").forEach((el) => {
+      const target = new Date(el.dataset.target!).getTime();
+      const daysEl = el.querySelector<HTMLElement>('[data-unit="days"]');
+      const hoursEl = el.querySelector<HTMLElement>('[data-unit="hours"]');
+      const minutesEl = el.querySelector<HTMLElement>('[data-unit="minutes"]');
+      const secondsEl = el.querySelector<HTMLElement>('[data-unit="seconds"]');
+
+      const setUnit = (unitEl: HTMLElement | null, value: string) => {
+        if (!unitEl || unitEl.textContent === value) return;
+        unitEl.textContent = value;
+        unitEl.classList.remove("is-ticking");
+        void unitEl.offsetWidth;
+        unitEl.classList.add("is-ticking");
+      };
+
+      const tick = () => {
+        const diff = Math.max(0, target - Date.now());
+        const days = Math.floor(diff / 86400000);
+        const hours = Math.floor((diff % 86400000) / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        setUnit(daysEl, String(days));
+        setUnit(hoursEl, String(hours).padStart(2, "0"));
+        setUnit(minutesEl, String(minutes).padStart(2, "0"));
+        setUnit(secondsEl, String(seconds).padStart(2, "0"));
+      };
+
+      tick();
+      setInterval(tick, 1000);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCountdowns);
+  } else {
+    initCountdowns();
+  }
+</script>

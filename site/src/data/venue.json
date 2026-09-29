@@ -1,0 +1,24 @@
+{
+  "_comment": "Informations du lieu (Destination + Préparer votre voyage). Remplacez placeholders (coordonnées GPS, parking) par les infos réelles du château.",
+  "name": "Château de Nainville-les-Roches",
+  "addressLines": ["1 Place de la Mairie", "91750 Nainville-les-Roches"],
+  "phone": "06 47 63 81 14",
+  "website": "https://chateaunainville.com",
+  "church": {
+    "name": "Église de Champcueil",
+    "address": "91750 Champcueil",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Eglise+de+Champcueil"
+  },
+  "gpsLat": 48.5486,
+  "gpsLng": 2.4536,
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Ch%C3%A2teau+de+Nainville-les-Roches",
+  "instagram": "https://www.instagram.com/chateau_nainville_les_roches/",
+  "instagramHandle": "@chateau_nainville_les_roches",
+  "parking": "Parking gratuit sur place, fléchage à l'arrivée le jour J.",
+  "accessibility": "Accès de plain-pied pour le vin d'honneur et le dîner — merci de nous signaler tout besoin particulier via le formulaire de réponse.",
+  "photos": [
+    { "src": "/images/chateau-facade.jpg", "alt": "Façade du Château de Nainville-les-Roches" },
+    { "src": "/images/chateau-jardins.jpg", "alt": "Jardins du château" },
+    { "src": "/images/chateau-details.jpg", "alt": "Détails d'architecture du château" }
+  ]
+}

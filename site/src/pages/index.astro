@@ -1,0 +1,20 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import StoryCarousel from "../components/StoryCarousel.astro";
+import FlightPlan from "../components/FlightPlan.astro";
+import DestinationSection from "../components/DestinationSection.astro";
+import PreparerVotreVoyage from "../components/PreparerVotreVoyage.astro";
+import EmbarquementCTA from "../components/EmbarquementCTA.astro";
+import JourneyRail from "../components/JourneyRail.astro";
+---
+
+<Layout title="Lisa & Ryan" transparentNav>
+  <JourneyRail fromId="notre-histoire" toId="plan-de-vol" />
+  <Hero />
+  <StoryCarousel />
+  <DestinationSection />
+  <FlightPlan />
+  <EmbarquementCTA />
+  <PreparerVotreVoyage />
+</Layout>

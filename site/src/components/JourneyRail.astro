@@ -1,0 +1,63 @@
+---
+// Fil conducteur visuel : un avion qui progresse discrètement pendant que l'invité
+// parcourt l'histoire (Accueil → Escale gourmande). Desktop uniquement — voir DA §03.
+interface Props {
+  fromId?: string;
+  toId?: string;
+}
+const { fromId = "notre-histoire", toId = "destination" } = Astro.props;
+---
+
+<div
+  id="journey-rail"
+  class="hidden lg:flex fixed right-7 top-1/2 -translate-y-1/2 z-40 flex-col items-center opacity-0 transition-opacity duration-500"
+  data-from={fromId}
+  data-to={toId}
+  aria-hidden="true"
+>
+  <div class="relative h-[220px] w-px bg-gradient-to-b from-transparent via-gris-piste to-transparent">
+    <svg
+      id="journey-plane"
+      class="absolute -left-[9px] -top-2"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="var(--color-or)"
+      stroke-width="1.5"
+    >
+      <path d="M2 13.5l7-1.2 4.8-7.8c.3-.5 1-.6 1.4-.2.3.3.4.7.3 1.1l-2 7.3 5.7-.6c.6-.1 1.2.3 1.3.9.1.5-.2 1-.7 1.2l-6.4 2.6-1.9 4.9c-.2.5-.8.7-1.2.4-.3-.2-.5-.5-.4-.9l.6-4.9-7.5.8c-.5.1-.9-.3-1-.8-.1-.3 0-.6.2-.8Z" transform="rotate(90 12 12)"/>
+    </svg>
+  </div>
+</div>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rail = document.getElementById("journey-rail");
+  const plane = document.getElementById("journey-plane");
+  if (rail && plane && !prefersReduced) {
+    gsap.registerPlugin(ScrollTrigger);
+    const from = document.getElementById(rail.dataset.from || "");
+    const to = document.getElementById(rail.dataset.to || "");
+    if (from && to) {
+      const track = rail.querySelector(".relative") as HTMLElement;
+      ScrollTrigger.create({
+        trigger: from,
+        start: "top 60%",
+        endTrigger: to,
+        end: "bottom 40%",
+        onEnter: () => gsap.to(rail, { opacity: 1, duration: 0.4 }),
+        onLeaveBack: () => gsap.to(rail, { opacity: 0, duration: 0.4 }),
+        onLeave: () => gsap.to(rail, { opacity: 0, duration: 0.4 }),
+        onEnterBack: () => gsap.to(rail, { opacity: 1, duration: 0.4 }),
+        onUpdate: (self) => {
+          const trackHeight = track?.clientHeight || 220;
+          gsap.set(plane, { y: self.progress * trackHeight });
+        },
+      });
+    }
+  }
+</script>

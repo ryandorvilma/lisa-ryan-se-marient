@@ -1,0 +1,59 @@
+{
+  "_comment": "Hébergements recommandés à proximité du château, affichés dans 'Préparer votre voyage' → #hebergements. Triés du moins cher au plus cher.",
+  "items": [
+    {
+      "name": "Première Classe Melun Sénart",
+      "location": "Vert-Saint-Denis",
+      "distance": "16 km du château · 19 min en voiture",
+      "phone": "08 92 70 71 37",
+      "priceFrom": "41",
+      "website": "https://melun-senart-vert-saint-denis.premiereclasse.com/fr-fr/",
+      "photo": "/images/hebergements/premiere-classe-melun-senart.jpg"
+    },
+    {
+      "name": "hotelF1 Évry A6",
+      "location": "Courcouronnes",
+      "distance": "17 km du château · 18 min en voiture",
+      "phone": "08 91 70 52 46",
+      "priceFrom": "48",
+      "website": "https://all.accor.com/hotel/2420/index.fr.shtml",
+      "photo": "/images/hebergements/hotelf1-evry.jpg"
+    },
+    {
+      "name": "Campanile Évry Ouest",
+      "location": "Corbeil-Essonnes",
+      "distance": "12 km du château · 15 min en voiture",
+      "phone": "01 60 89 41 45",
+      "priceFrom": "49",
+      "website": "https://corbeil-essonnes-evry.campanile.com/fr-fr/",
+      "photo": "/images/hebergements/campanile-evry.jpg"
+    },
+    {
+      "name": "Apollonia — Hôtel Kyriad",
+      "location": "Saint-Fargeau-Ponthierry",
+      "distance": "5 km du château · 6 min en voiture",
+      "phone": "01 60 65 65 35",
+      "priceFrom": "50",
+      "website": "https://saint-fargeau-ponthierry.kyriad.com/fr-fr/",
+      "photo": "/images/hebergements/apollonia-kyriad.jpg"
+    },
+    {
+      "name": "Ibis Évry-Courcouronnes",
+      "location": "Courcouronnes",
+      "distance": "17 km du château · 18 min en voiture",
+      "phone": "01 60 77 74 75",
+      "priceFrom": "54",
+      "website": "https://all.accor.com/hotel/0752/index.fr.shtml",
+      "photo": "/images/hebergements/ibis-evry-courcouronnes.jpg"
+    },
+    {
+      "name": "B&B Hôtel Corbeil-Essonnes",
+      "location": "Corbeil-Essonnes",
+      "distance": "12 km du château · 15 min en voiture",
+      "phone": "08 92 78 80 35",
+      "priceFrom": "61",
+      "website": "https://www.hotel-bb.com/fr/hotel/corbeil-essonnes",
+      "photo": "/images/hebergements/bb-corbeil-essonnes.jpg"
+    }
+  ]
+}

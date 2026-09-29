@@ -1,0 +1,45 @@
+---
+import Layout from "../layouts/Layout.astro";
+import accommodations from "../data/accommodations.json";
+import { publicFileExists } from "../lib/media";
+---
+
+<Layout title="Hébergements" description="Où dormir près du Château de Nainville-les-Roches pour le mariage de Lisa & Ryan.">
+  <section class="px-6 sm:px-10 pt-32 sm:pt-40 pb-16 sm:pb-20 bg-sauge text-center texture-grain">
+    <p class="eyebrow text-ivoire/85 text-xs sm:text-sm hero-enter" style="animation-delay:.05s">S'installer</p>
+    <h1 class="font-serif text-4xl sm:text-6xl text-ivoire font-medium mt-3 hero-enter" style="animation-delay:.15s">Hébergements</h1>
+    <p class="text-ivoire/85 text-sm sm:text-base mt-4 max-w-lg mx-auto leading-relaxed hero-enter" style="animation-delay:.25s">
+      Six adresses recommandées à proximité du château, du plus économique au plus confortable.
+    </p>
+  </section>
+
+  <section class="px-6 sm:px-10 py-16 sm:py-24 bg-ivoire">
+    <div class="max-w-4xl mx-auto grid sm:grid-cols-2 gap-5">
+      {accommodations.items.map((hotel, i) => (
+        <div class="border border-gris-piste overflow-hidden card-lift reveal reveal--scale" style={`transition-delay:${(i % 2) * 0.1}s`}>
+          <div class="h-40 bg-kraft overflow-hidden flex items-center justify-center">
+            {publicFileExists(hotel.photo) ? (
+              <img src={hotel.photo} alt={hotel.name} loading="lazy" decoding="async" class="w-full h-full object-cover" />
+            ) : (
+              <span class="text-ardoise/30 text-[11px] px-3 text-center">[ photo à venir ]</span>
+            )}
+          </div>
+          <div class="p-5">
+            <p class="font-serif text-lg text-vert-chateau font-semibold">{hotel.name}</p>
+            <p class="text-sm text-sauge-deep italic">{hotel.location}</p>
+            <p class="text-xs text-ardoise/60 mt-1">{hotel.distance}</p>
+            <p class="text-xs text-ardoise/60">À partir de {hotel.priceFrom} € / nuit</p>
+            <div class="flex items-center gap-2 mt-4">
+              <a href={`tel:${hotel.phone.replace(/\s/g, "")}`} class="btn btn-outline flex-1 justify-center py-2 px-3 text-[11px]">
+                {hotel.phone}
+              </a>
+              <a href={hotel.website} target="_blank" rel="noopener" class="btn btn-solid flex-1 justify-center py-2 px-3 text-[11px]">
+                Réserver
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

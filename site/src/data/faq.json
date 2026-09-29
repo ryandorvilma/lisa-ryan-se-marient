@@ -1,0 +1,45 @@
+{
+  "_comment": "Rubrique 'Informations passagers'. Ajoutez/modifiez librement les questions-réponses.",
+  "items": [
+    {
+      "q": "À quelle heure devons-nous arriver ?",
+      "a": "Nous vous conseillons d'arriver à l'église de Champcueil quelques minutes avant 16h15, la cérémonie débutant à 16h30 précises."
+    },
+    {
+      "q": "Les enfants sont-ils invités ?",
+      "a": "Oui, avec plaisir. Merci de nous indiquer leur nombre dans votre réponse afin que nous puissions adapter l'organisation."
+    },
+    {
+      "q": "Quel est le dress code ?",
+      "a": "Une tenue élégante de cérémonie, avec des chaussures confortables pour profiter des jardins du château."
+    },
+    {
+      "q": "Où pouvons-nous nous garer ?",
+      "a": "Un parking gratuit est disponible sur place au Château de Nainville-les-Roches, avec fléchage le jour J."
+    },
+    {
+      "q": "Où dormir ?",
+      "a": "Plusieurs hébergements se trouvent à proximité du château. Une liste d'adresses recommandées est disponible dans la rubrique « Préparer votre voyage »."
+    },
+    {
+      "q": "Comment rejoindre le château ?",
+      "a": "Le Château de Nainville-les-Roches est à environ 35 km au sud de Paris. Un plan d'accès sera transmis aux invités confirmés."
+    },
+    {
+      "q": "Puis-je participer uniquement à certaines parties du week-end ?",
+      "a": "Oui, le formulaire de réponse vous permet d'indiquer précisément votre présence à la cérémonie, à la réception et à l'escale gourmande du dimanche."
+    },
+    {
+      "q": "Jusqu'à quelle date confirmer ma présence ?",
+      "a": "Nous vous remercions de répondre avant le 14 février 2027 via le formulaire « Confirmer votre embarquement »."
+    },
+    {
+      "q": "Avez-vous une liste de mariage ?",
+      "a": "Le plus beau des cadeaux sera votre présence à nos côtés. Si vous souhaitez tout de même nous gâter, une cagnotte en ligne sera bientôt disponible."
+    },
+    {
+      "q": "Qui contacter en cas de problème ?",
+      "a": "Vous pouvez joindre Lisa au 07 77 31 64 49 ou Ryan au 06 50 12 65 86, ou écrire à ryan.lisa.dorvilma@gmail.com."
+    }
+  ]
+}

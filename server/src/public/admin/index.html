@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Espace RSVP — Lisa &amp; Ryan</title>
+<link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">L&amp;R — RSVP</span>
+    <button id="logout-btn" type="button">Se déconnecter</button>
+  </div>
+
+  <main>
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="toolbar">
+      <input type="search" id="search-input" placeholder="Rechercher un invité (nom, prénom)…" />
+      <a class="export-btn" href="/admin/api/export.csv">Export CSV</a>
+      <a class="export-btn" href="/admin/api/export.xlsx">Export Excel</a>
+    </div>
+
+    <table id="responses-table">
+      <thead>
+        <tr>
+          <th>Invité</th>
+          <th>Présence</th>
+          <th>Voyageurs</th>
+          <th>Participation</th>
+          <th>Repas</th>
+          <th>Reçu le</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="responses-body"></tbody>
+    </table>
+    <p id="empty-state" class="hidden" style="color:#8a8a80; padding: 20px 0;">Aucune réponse pour le moment.</p>
+  </main>
+
+  <div class="modal-backdrop hidden" id="modal-backdrop">
+    <form class="modal" id="edit-form">
+      <h2>Modifier la réponse</h2>
+      <input type="hidden" id="edit-id" />
+      <div class="row2">
+        <div class="field">
+          <label>Prénom</label>
+          <input id="edit-first-name" required />
+        </div>
+        <div class="field">
+          <label>Nom</label>
+          <input id="edit-last-name" required />
+        </div>
+      </div>
+      <div class="field">
+        <label>Présence</label>
+        <select id="edit-attending">
+          <option value="yes">Présent·e</option>
+          <option value="no">Absent·e</option>
+        </select>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Adultes</label>
+          <input id="edit-adults" type="number" min="0" max="10" />
+        </div>
+        <div class="field">
+          <label>Enfants</label>
+          <input id="edit-children" type="number" min="0" max="10" />
+        </div>
+        <div class="field">
+          <label>Bébés</label>
+          <input id="edit-babies" type="number" min="0" max="10" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Accompagnants</label>
+        <textarea id="edit-companions" rows="2"></textarea>
+      </div>
+      <div class="field checks">
+        <label><input type="checkbox" id="edit-ceremony" /> Église</label>
+        <label><input type="checkbox" id="edit-cocktail" /> Vin d'honneur</label>
+        <label><input type="checkbox" id="edit-dinner" /> Repas</label>
+        <label><input type="checkbox" id="edit-brunch" /> Escale gourmande</label>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Repas végétariens</label>
+          <input id="edit-vegetarian" type="number" min="0" max="10" value="0" />
+        </div>
+        <div class="field">
+          <label>Repas halal</label>
+          <input id="edit-halal" type="number" min="0" max="10" value="0" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Allergies / précisions</label>
+        <textarea id="edit-dietnotes" rows="2"></textarea>
+      </div>
+      <div class="field">
+        <label>Transport / hébergement</label>
+        <textarea id="edit-logistics" rows="2"></textarea>
+      </div>
+      <div class="field">
+        <label>Message</label>
+        <textarea id="edit-message" rows="2"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="delete-btn" style="color:#a33; background:none; border:none; cursor:pointer; font-size:12px;">Supprimer cette réponse</button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" id="cancel-btn" style="padding:9px 14px; border:1px solid var(--gris); background:none; border-radius:2px; cursor:pointer;">Annuler</button>
+          <button type="submit" class="primary" style="padding:9px 16px; width:auto;">Enregistrer</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="/admin/app.js"></script>
+</body>
+</html>

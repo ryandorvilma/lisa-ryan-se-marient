@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Connexion — Espace RSVP</title>
+<link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+  <div class="login-screen">
+    <form class="login-card" id="login-form" novalidate>
+      <p class="eyebrow">Espace privé</p>
+      <h1>Lisa &amp; Ryan</h1>
+      <div class="field">
+        <label for="username">Identifiant</label>
+        <input id="username" name="username" type="text" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="primary">Se connecter</button>
+      <p class="error" id="login-error"></p>
+    </form>
+  </div>
+
+  <script src="/admin/login.js"></script>
+</body>
+</html>

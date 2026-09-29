@@ -1,0 +1,99 @@
+---
+import venue from "../data/venue.json";
+import { publicFileExists } from "../lib/media";
+import Icon from "./Icon.astro";
+---
+
+<section id="destination" class="relative bg-vert-chateau scroll-mt-20 texture-grain overflow-hidden">
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3">
+    {venue.photos.slice(0, 3).map((photo, i) => (
+      <div
+        class:list={[
+          "destination-photo aspect-[4/5] sm:aspect-auto sm:h-[70vh] bg-kraft/20 flex items-center justify-center overflow-hidden",
+          i === 1 && "hidden sm:flex",
+          i === 2 && "hidden lg:flex",
+        ]}
+      >
+        {publicFileExists(photo.src) ? (
+          <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" class="w-full h-full object-cover" />
+        ) : (
+          <span class="text-ivoire/40 text-xs px-6 text-center">[ {photo.alt} ]</span>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <div class="px-6 sm:px-10 py-16 sm:py-20 text-center reveal">
+    <p class="eyebrow text-or-clair text-xs sm:text-base">La destination</p>
+    <h2 class="font-serif text-4xl sm:text-6xl text-ivoire font-medium mt-3 max-w-2xl mx-auto">
+      {venue.name}
+    </h2>
+
+    {venue.instagram && (
+      <a
+        href={venue.instagram}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2 mt-4 text-or-clair hover:text-ivoire transition-colors text-sm sm:text-base"
+      >
+        <Icon name="instagram" class="w-5 h-5 sm:w-6 sm:h-6" />
+        {venue.instagramHandle}
+      </a>
+    )}
+
+    <div class="mt-10 grid sm:grid-cols-3 gap-8 max-w-3xl mx-auto text-center text-ivoire/85 text-sm sm:text-base">
+      <div class="reveal flex flex-col items-center gap-3" style="transition-delay:.05s">
+        <Icon name="map-pin" class="w-11 h-11 sm:w-12 sm:h-12 text-or-clair" />
+        <p class="eyebrow text-or-clair text-[11px] sm:text-xs mb-1">Adresse</p>
+        <a
+          href={venue.mapsUrl}
+          target="_blank"
+          rel="noopener"
+          class="underline decoration-or-clair/40 underline-offset-2 hover:text-or-clair transition-colors"
+        >
+          {venue.addressLines.map((line) => <p>{line}</p>)}
+        </a>
+      </div>
+      <div class="reveal flex flex-col items-center gap-3" style="transition-delay:.12s">
+        <Icon name="car" class="w-11 h-11 sm:w-12 sm:h-12 text-or-clair" />
+        <p class="eyebrow text-or-clair text-[11px] sm:text-xs mb-1">Parking</p>
+        <p>{venue.parking}</p>
+      </div>
+      <div class="reveal flex flex-col items-center gap-3" style="transition-delay:.19s">
+        <Icon name="accessibility" class="w-11 h-11 sm:w-12 sm:h-12 text-or-clair" />
+        <p class="eyebrow text-or-clair text-[11px] sm:text-xs mb-1">Accessibilité</p>
+        <p>{venue.accessibility}</p>
+      </div>
+    </div>
+
+    <a
+      href={venue.mapsUrl}
+      target="_blank"
+      rel="noopener"
+      class="btn btn-solid inline-flex mt-10 sm:text-sm sm:py-4 sm:px-8"
+    >
+      VOIR L'ITINÉRAIRE
+    </a>
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReduced) {
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll<HTMLElement>(".destination-photo").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { scale: 1.12 },
+        {
+          scale: 1,
+          ease: "none",
+          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 0.8 },
+        }
+      );
+    });
+  }
+</script>

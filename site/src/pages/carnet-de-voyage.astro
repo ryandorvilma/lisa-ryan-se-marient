@@ -1,0 +1,38 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { publicFileExists } from "../lib/media";
+
+// Déposez vos photos dans site/public/images/carnet/1.jpg, 2.jpg, … (jusqu'à 9) — elles apparaissent automatiquement.
+const photos = Array.from({ length: 9 }, (_, i) => ({
+  src: `/images/carnet/${i + 1}.jpg`,
+  alt: `Photo souvenir ${i + 1} de Lisa et Ryan`,
+}));
+---
+
+<Layout title="Carnet de voyage" description="Quelques souvenirs de Lisa & Ryan, avant le grand jour.">
+  <section class="px-6 sm:px-10 pt-32 sm:pt-40 pb-14 sm:pb-16 bg-ivoire text-center">
+    <p class="eyebrow text-sauge-deep text-xs sm:text-sm hero-enter" style="animation-delay:.05s">Souvenirs</p>
+    <h1 class="font-serif text-4xl sm:text-6xl text-vert-chateau font-medium mt-3 hero-enter" style="animation-delay:.15s">Carnet de voyage</h1>
+    <p class="text-sm sm:text-base text-ardoise/70 mt-4 max-w-lg mx-auto leading-relaxed hero-enter" style="animation-delay:.25s">
+      Quelques images de notre route jusqu'ici. Cette page deviendra la galerie officielle du mariage après le 31
+      juillet 2027.
+    </p>
+  </section>
+
+  <section class="px-4 sm:px-10 pb-20 sm:pb-28">
+    <div class="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+      {photos.map((p, i) => (
+        <div
+          class="aspect-square bg-kraft flex items-center justify-center reveal reveal--scale card-lift overflow-hidden"
+          style={`transition-delay:${(i % 6) * 0.06}s`}
+        >
+          {publicFileExists(p.src) ? (
+            <img src={p.src} alt={p.alt} loading="lazy" decoding="async" class="w-full h-full object-cover" />
+          ) : (
+            <span class="text-ardoise/30 text-[11px] px-3 text-center">[ photo à venir ]</span>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

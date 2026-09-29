@@ -1,0 +1,33 @@
+---
+import site from "../data/site.json";
+import Stamp from "./Stamp.astro";
+import WorldMap from "./WorldMap.astro";
+const [firstName, secondName] = site.coupleNames;
+---
+
+<section class="relative bg-vert-chateau text-ivoire overflow-hidden texture-grain">
+  <WorldMap class="absolute inset-0 w-full h-full text-ivoire" opacity={0.05} />
+  <div class="relative z-10 flex flex-col items-center gap-5 px-6 py-28 sm:py-36 text-center reveal">
+    <div class="reveal reveal--scale mb-2" style="transition-delay:.05s">
+      <Stamp class="w-16 h-16 sm:w-20 sm:h-20 xl:w-24 xl:h-24 text-or-clair/80" />
+    </div>
+    <p class="font-serif text-3xl sm:text-5xl xl:text-6xl leading-snug max-w-xl xl:max-w-3xl">
+      20 ans d'histoire.<br />Et le voyage ne fait que commencer.
+    </p>
+    <p class="font-script text-5xl sm:text-7xl xl:text-8xl text-or-clair mt-2">{firstName} &amp; {secondName}</p>
+    <p class="eyebrow text-base sm:text-lg xl:text-xl text-ivoire/80 mt-1">{site.weddingDateShort}</p>
+  </div>
+</section>
+
+<footer class="bg-vert-chateau border-t border-white/10 text-ivoire/70">
+  <div class="mx-auto max-w-5xl xl:max-w-6xl px-6 py-6 xl:py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs xl:text-sm">
+    <p>&copy; {new Date().getFullYear()} {firstName} &amp; {secondName}</p>
+    <nav class="flex gap-6 xl:gap-8" aria-label="Pied de page">
+      <a href="/#preparer-votre-voyage" class="nav-underline hover:text-ivoire transition-colors">Infos pratiques</a>
+      <a href="/faq" class="nav-underline hover:text-ivoire transition-colors">FAQ</a>
+      <a href="/carnet-de-voyage" class="nav-underline hover:text-ivoire transition-colors">Carnet de voyage</a>
+      <a href="/rsvp" class="nav-underline hover:text-ivoire transition-colors">Embarquement</a>
+    </nav>
+    <a href={`mailto:${site.contactEmail}`} class="nav-underline hover:text-ivoire transition-colors">{site.contactEmail}</a>
+  </div>
+</footer>

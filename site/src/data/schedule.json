@@ -1,0 +1,50 @@
+{
+  "_comment": "Déroulé de la journée (Plan de vol) et du brunch (Escale gourmande). Modifiez les horaires ici, ils sont utilisés sur la page d'accueil et la page Destination.",
+  "saturday": {
+    "dateLabel": "Samedi 31 juillet 2027",
+    "steps": [
+      {
+        "time": "16h30",
+        "title": "Cérémonie",
+        "place": "Église de Champcueil",
+        "address": "91750 Champcueil",
+        "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Eglise+de+Champcueil",
+        "icon": "church"
+      },
+      {
+        "time": "18h00",
+        "title": "Vin d'honneur",
+        "place": "Château de Nainville-les-Roches",
+        "address": "1 Place de la Mairie, 91750 Nainville-les-Roches",
+        "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Ch%C3%A2teau+de+Nainville-les-Roches",
+        "icon": "toast"
+      },
+      {
+        "time": "19h30",
+        "title": "Dîner",
+        "place": "",
+        "icon": "dinner"
+      },
+      {
+        "time": "23h00",
+        "title": "Pièce montée",
+        "place": "",
+        "icon": "cake"
+      },
+      {
+        "time": "Jusqu'à 6h30",
+        "title": "Atterrissage",
+        "place": "Voir les hébergements",
+        "mapsUrl": "/hebergements",
+        "icon": "bed"
+      }
+    ]
+  },
+  "sunday": {
+    "dateLabel": "Dimanche 1er août 2027",
+    "title": "Escale gourmande",
+    "time": "À partir de 11h30",
+    "place": "Château de Nainville-les-Roches",
+    "text": "Après cette belle journée passée à vos côtés, notre voyage se poursuit le temps d'une escale gourmande. Nous serons heureux de vous retrouver le lendemain à partir de 11h30 au Château de Nainville-les-Roches, autour d'un brunch. Une dernière escale ensemble, avant que chacun ne reprenne son envol."
+  }
+}

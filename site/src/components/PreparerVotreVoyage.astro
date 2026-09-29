@@ -1,0 +1,31 @@
+---
+import Icon from "./Icon.astro";
+import practicalInfo from "../data/practical-info.json";
+---
+
+<section id="preparer-votre-voyage" class="px-6 sm:px-10 py-20 sm:py-28 bg-ivoire scroll-mt-20">
+  <div class="max-w-3xl mx-auto text-center reveal">
+    <p class="eyebrow text-sauge-deep text-xs sm:text-sm">S'organiser</p>
+    <h2 class="font-serif text-4xl sm:text-5xl text-vert-chateau font-medium mt-2">Préparer votre voyage</h2>
+  </div>
+
+  <div class="mt-12 max-w-4xl mx-auto grid sm:grid-cols-2 gap-5">
+    {practicalInfo.categories.map((cat, i) => (
+      <div class="border border-gris-piste p-7 flex flex-col gap-3 reveal reveal--scale card-lift" style={`transition-delay:${(i % 2) * 0.1}s`}>
+        <Icon name={cat.icon as any} class="w-8 h-8 text-or" />
+        <h3 class="font-serif text-xl text-vert-chateau font-semibold">{cat.title}</h3>
+        <p class="text-sm text-ardoise/70 leading-relaxed" set:html={cat.text} />
+        {cat.cta && (
+          <a
+            href={cat.cta.href}
+            target={cat.cta.href.startsWith("http") ? "_blank" : undefined}
+            rel={cat.cta.href.startsWith("http") ? "noopener" : undefined}
+            class="btn btn-outline w-fit mt-auto py-2 px-4 text-[11px] border-vert-chateau text-vert-chateau hover:bg-vert-chateau hover:text-ivoire"
+          >
+            {cat.cta.label.toUpperCase()} →
+          </a>
+        )}
+      </div>
+    ))}
+  </div>
+</section>

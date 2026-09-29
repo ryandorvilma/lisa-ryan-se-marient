@@ -1,0 +1,148 @@
+---
+import site from "../data/site.json";
+
+interface Props {
+  transparentAtTop?: boolean;
+}
+const { transparentAtTop = false } = Astro.props;
+
+const links = [
+  { label: "Notre histoire", href: "/#notre-histoire" },
+  { label: "Destination", href: "/#destination" },
+  { label: "Le mariage", href: "/#plan-de-vol" },
+  { label: "Infos", href: "/#preparer-votre-voyage" },
+];
+
+const mobileLinks = [
+  { label: "Accueil", href: "/" },
+  { label: "Notre histoire", href: "/#notre-histoire" },
+  { label: "Plan de vol", href: "/#plan-de-vol" },
+  { label: "Destination", href: "/#destination" },
+  { label: "Escale gourmande", href: "/escale-gourmande" },
+  { label: "Préparer votre voyage", href: "/#preparer-votre-voyage" },
+  { label: "Carnet de voyage", href: "/carnet-de-voyage" },
+  { label: "Informations passagers", href: "/faq" },
+];
+---
+
+<header class="fixed top-0 inset-x-0 z-50" data-transparent-at-top={transparentAtTop ? "true" : "false"}>
+  <div class:list={["nav-bar flex items-center justify-between px-5 sm:px-10 py-3.5 sm:py-4 transition-colors duration-500", { "is-scrolled": !transparentAtTop }]}>
+    <a href="/" class="nav-logo shrink-0" aria-label={`Accueil — ${site.coupleNames.join(" & ")}`}>
+      <img src="/images/monogram-lr.png" alt="Lisa &amp; Ryan" class="h-9 sm:h-11 w-auto" />
+    </a>
+
+    <nav class="hidden md:flex items-center gap-10 text-xs tracking-[0.15em] nav-links" aria-label="Navigation principale">
+      {links.map((link) => (
+        <a href={link.href} class="nav-underline py-1">{link.label.toUpperCase()}</a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <button
+        id="menu-toggle"
+        type="button"
+        class="md:hidden nav-logo p-1"
+        aria-label="Ouvrir le menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-6 h-6" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    class="fixed inset-0 bg-vert-chateau text-ivoire translate-x-full transition-transform duration-500 ease-out md:hidden flex flex-col"
+    aria-hidden="true"
+  >
+    <div class="flex items-center justify-between px-5 py-4">
+      <img src="/images/monogram-lr.png" alt="Lisa &amp; Ryan" class="h-8 w-auto" />
+      <button id="menu-close" type="button" class="p-1" aria-label="Fermer le menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-6 h-6" aria-hidden="true">
+          <path d="M5 5l14 14M19 5L5 19"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="flex flex-col gap-1 px-6 py-6 overflow-y-auto" aria-label="Toutes les rubriques">
+      {mobileLinks.map((link, i) => (
+        <a href={link.href} class="mobile-link py-3.5 border-b border-white/10 text-base font-serif active:pl-2 transition-[padding] duration-200" style={`--i:${i}`}>{link.label}</a>
+      ))}
+      <a
+        href="/rsvp"
+        class="btn btn-solid mt-6 py-4"
+      >
+        CONFIRMER VOTRE EMBARQUEMENT
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav-bar {
+    color: var(--color-ivoire);
+  }
+  .nav-bar a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .nav-bar.is-scrolled {
+    background: color-mix(in srgb, var(--color-ivoire) 92%, transparent);
+    color: var(--color-vert-chateau);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  }
+  #mobile-menu.is-open {
+    transform: translateX(0);
+  }
+  .mobile-link {
+    opacity: 0;
+    transform: translateX(14px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    transition-delay: calc(var(--i, 0) * 45ms);
+  }
+  #mobile-menu.is-open .mobile-link {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-link { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>("header[data-transparent-at-top]");
+  const bar = document.querySelector<HTMLElement>(".nav-bar");
+  const isTransparentAtTop = header?.dataset.transparentAtTop === "true";
+  if (isTransparentAtTop) {
+    const onScroll = () => {
+      if (!bar) return;
+      if (window.scrollY > 40) bar.classList.add("is-scrolled");
+      else bar.classList.remove("is-scrolled");
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+
+  const toggle = document.getElementById("menu-toggle");
+  const close = document.getElementById("menu-close");
+  const menu = document.getElementById("mobile-menu");
+
+  const openMenu = () => {
+    menu?.classList.add("is-open");
+    menu?.setAttribute("aria-hidden", "false");
+    toggle?.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  };
+  const closeMenu = () => {
+    menu?.classList.remove("is-open");
+    menu?.setAttribute("aria-hidden", "true");
+    toggle?.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  };
+
+  toggle?.addEventListener("click", openMenu);
+  close?.addEventListener("click", closeMenu);
+  menu?.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
+</script>

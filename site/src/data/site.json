@@ -1,0 +1,18 @@
+{
+  "_comment": "Contenu central du site. Modifiez ce fichier pour changer les infos qui apparaissent partout (titre, date, contact, RSVP). Rien à chercher dans les composants.",
+  "coupleNames": ["Lisa", "Ryan"],
+  "weddingDateISO": "2027-07-31T16:30:00+02:00",
+  "weddingDateLabel": "31 juillet 2027",
+  "weddingDateShort": "31 · 07 · 2027",
+  "tagline": "Destination : Pour toujours",
+  "introQuote": "Il y a 20 ans, nous embarquions ensemble pour une belle aventure. Aujourd'hui, nous vous invitons à partager avec nous l'une de ses plus belles escales.",
+  "rsvpDeadlineLabel": "14 février 2027",
+  "rsvpDeadlineISO": "2027-02-14",
+  "contactEmail": "ryan.lisa.dorvilma@gmail.com",
+  "contacts": [
+    { "name": "Lisa", "phone": "07 77 31 64 49" },
+    { "name": "Ryan", "phone": "06 50 12 65 86" }
+  ],
+  "ogImage": "/images/og-cover.jpg",
+  "siteUrl": "https://lisa-ryan-se-marient.fr"
+}

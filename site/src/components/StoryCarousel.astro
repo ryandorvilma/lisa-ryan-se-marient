@@ -1,0 +1,182 @@
+---
+import { listStoryPhotos } from "../lib/media";
+
+const items = listStoryPhotos();
+---
+
+<section id="notre-histoire" class="px-6 sm:px-10 py-20 sm:py-28 bg-ivoire scroll-mt-20 overflow-hidden">
+  <div class="max-w-5xl mx-auto reveal">
+    <p class="eyebrow text-sauge-deep text-xs sm:text-sm">Notre histoire</p>
+    <h2 class="font-serif text-4xl sm:text-5xl text-vert-chateau font-medium mt-2 max-w-lg">
+      Notre plus beau voyage
+    </h2>
+    <p class="text-sm sm:text-base text-ardoise/70 mt-4 max-w-xl leading-relaxed">
+      « Notre histoire s'écrit depuis 20 ans, et nous sommes heureux de partager avec vous l'un de ses plus beaux
+      chapitres. »
+    </p>
+  </div>
+
+  <!-- mobile : ligne centrée, photos en alternance gauche / droite -->
+  <div class="sm:hidden mt-12 reveal" style="transition-delay:.1s">
+    <div class="relative max-w-sm mx-auto">
+      <!-- la ligne s'arrête pile au dernier point (pas au bas du bloc de texte final) -->
+      <div class="absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-px bg-gris-piste" aria-hidden="true"></div>
+
+      <ol class="relative space-y-9">
+        {items.map((photo, i) => {
+          const left = i % 2 === 0;
+          return (
+            <li class="relative grid grid-cols-2 gap-x-3 items-start">
+              <span class="absolute left-1/2 -translate-x-1/2 top-2 w-2.5 h-2.5 rounded-full bg-or ring-4 ring-ivoire z-10" aria-hidden="true"></span>
+              <div
+                class:list={[
+                  "flex flex-col gap-1.5",
+                  left ? "col-start-1 items-end text-right pr-4" : "col-start-2 items-start text-left pl-4",
+                ]}
+              >
+                <button
+                  type="button"
+                  class="story-photo-trigger shrink-0 w-24 h-28 bg-kraft ring-4 ring-ivoire shadow-sm overflow-hidden"
+                  data-src={photo.src}
+                  data-caption={photo.caption ?? ""}
+                  data-date={`${photo.sublabel} ${photo.year}`}
+                  aria-label={`Agrandir la photo — ${photo.caption ?? photo.sublabel} ${photo.year}`}
+                >
+                  <img src={photo.src} alt={`Lisa & Ryan — ${photo.caption ?? photo.sublabel} ${photo.year}`} loading="lazy" decoding="async" class="w-full h-full object-contain" />
+                </button>
+                <div>
+                  <p class="font-serif text-lg text-vert-chateau font-semibold leading-tight">{photo.year}</p>
+                  <p class="text-xs text-ardoise/60 mt-0.5">{photo.sublabel}</p>
+                  {photo.caption && <p class="text-xs font-serif text-sauge-deep mt-0.5">{photo.caption}</p>}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+
+    <!-- clôture : dans son propre bloc, un petit segment relie le point au bas de la ligne ci-dessus -->
+    <div class="relative max-w-sm mx-auto mt-9">
+      <span class="absolute left-1/2 -translate-x-1/2 -top-9 w-px h-9 bg-gris-piste" aria-hidden="true"></span>
+      <span class="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-1/2 w-3 h-3 rounded-full bg-or-clair ring-4 ring-ivoire z-10" aria-hidden="true"></span>
+      <div class="flex flex-col items-center text-center pt-4">
+        <p class="font-serif text-lg text-vert-chateau font-semibold leading-tight">2027 <span class="text-sm font-normal text-ardoise/60">· 31 juillet</span></p>
+        <p class="text-xs text-ardoise/60 mt-0.5 italic">20 ans plus tard... nous nous marions.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- desktop : toutes les photos visibles, en alternance au-dessus / en dessous de la ligne -->
+  <div class="hidden sm:block mt-16 reveal" style="transition-delay:.1s">
+    <div class="relative max-w-7xl mx-auto px-2 lg:px-6">
+      <!-- ligne solide 2007→2026 -->
+      <div class="absolute left-0 right-[220px] lg:right-[280px] top-1/2 -translate-y-1/2 h-px bg-gris-piste" aria-hidden="true"></div>
+      <!-- ligne pointillée 2026→2027 : un peu de distance avant la destination -->
+      <div class="absolute right-0 w-[220px] lg:w-[280px] top-1/2 -translate-y-1/2 border-t border-dashed border-or-clair" aria-hidden="true"></div>
+
+      <!-- clôture : le bout du chemin — sur la ligne, pas au-dessus -->
+      <div class="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
+        <div class="w-32 h-40 lg:w-40 lg:h-52 bg-vert-chateau flex items-center justify-center text-center p-4 shadow-lg">
+          <p class="font-serif text-or-clair text-base leading-snug">Nous nous marions</p>
+        </div>
+        <span class="font-serif text-sm font-semibold text-vert-chateau whitespace-nowrap">2027</span>
+      </div>
+
+      <div class="relative flex items-center justify-between py-56 lg:py-72 pr-[220px] lg:pr-[280px]">
+        {items.map((item, i) => {
+          const above = i % 2 === 0;
+          const textBlock = (
+            <div class="text-center whitespace-nowrap">
+              <p class="text-xs text-ardoise/60">{item.sublabel}</p>
+              {item.caption && <p class="font-serif text-sm text-vert-chateau mt-0.5">{item.caption}</p>}
+            </div>
+          );
+          return (
+            <div class="relative flex flex-col items-center">
+              <div class={`absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 ${above ? "bottom-[calc(100%+16px)]" : "top-[calc(100%+16px)]"}`}>
+                {above && textBlock}
+                <button
+                  type="button"
+                  class="story-photo-trigger block w-32 h-40 lg:w-40 lg:h-52 bg-kraft ring-4 ring-ivoire shadow-lg overflow-hidden transition-transform duration-300 hover:scale-[1.04]"
+                  data-src={item.src}
+                  data-caption={item.caption ?? ""}
+                  data-date={`${item.sublabel} ${item.year}`}
+                  aria-label={`Agrandir la photo — ${item.caption ?? item.sublabel} ${item.year}`}
+                >
+                  <img
+                    src={item.src}
+                    alt={`Lisa & Ryan — ${item.caption ?? item.sublabel} ${item.year}`}
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-contain"
+                  />
+                </button>
+                {!above && textBlock}
+              </div>
+              <span class="w-2.5 h-2.5 rounded-full bg-or ring-4 ring-ivoire shrink-0"></span>
+              <span class={`absolute font-serif text-sm text-vert-chateau whitespace-nowrap ${above ? "top-[calc(100%+8px)]" : "bottom-[calc(100%+8px)]"}`}>{item.year}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+
+  <!-- vitrine : agrandissement au clic -->
+  <div id="story-lightbox" class="hidden fixed inset-0 z-50 bg-vert-chateau/95 items-center justify-center p-6" role="dialog" aria-modal="true" aria-label="Photo en grand">
+    <button id="story-lightbox-close" type="button" class="absolute top-5 right-5 sm:top-8 sm:right-8 text-ivoire/80 hover:text-ivoire transition-colors" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-7 h-7" aria-hidden="true">
+        <path d="M5 5l14 14M19 5L5 19"/>
+      </svg>
+    </button>
+    <figure class="max-w-lg w-full text-center">
+      <img id="story-lightbox-img" src="" alt="" class="w-full max-h-[65vh] object-contain shadow-2xl mx-auto" />
+      <figcaption class="mt-5">
+        <p id="story-lightbox-caption" class="font-serif text-2xl text-or-clair"></p>
+        <p id="story-lightbox-date" class="eyebrow text-ivoire/70 text-xs mt-2"></p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  const lightbox = document.getElementById("story-lightbox");
+  const lbImg = document.getElementById("story-lightbox-img") as HTMLImageElement | null;
+  const lbCaption = document.getElementById("story-lightbox-caption");
+  const lbDate = document.getElementById("story-lightbox-date");
+  const closeBtn = document.getElementById("story-lightbox-close");
+
+  if (lightbox && lbImg && lbCaption && lbDate && closeBtn) {
+    const open = (src: string, caption: string, date: string) => {
+      lbImg.src = src;
+      lbImg.alt = caption || date;
+      lbCaption.textContent = caption;
+      lbCaption.classList.toggle("hidden", !caption);
+      lbDate.textContent = date;
+      lightbox.classList.remove("hidden");
+      lightbox.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    };
+
+    const close = () => {
+      lightbox.classList.add("hidden");
+      lightbox.classList.remove("flex");
+      document.body.style.overflow = "";
+    };
+
+    document.querySelectorAll<HTMLButtonElement>(".story-photo-trigger").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        open(btn.dataset.src || "", btn.dataset.caption || "", btn.dataset.date || "");
+      });
+    });
+
+    closeBtn.addEventListener("click", close);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+  }
+</script>

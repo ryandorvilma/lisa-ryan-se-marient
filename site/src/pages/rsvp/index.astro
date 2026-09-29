@@ -1,0 +1,887 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import site from "../../data/site.json";
+import Stamp from "../../components/Stamp.astro";
+---
+
+<Layout title="Confirmer votre embarquement" description="Serez-vous du voyage ? Confirmez votre présence au mariage de Lisa & Ryan.">
+  <section class="px-6 sm:px-10 pt-32 sm:pt-40 pb-12 sm:pb-16 bg-sauge text-center texture-grain overflow-hidden">
+    <p class="eyebrow text-ivoire/85 text-xs sm:text-sm hero-enter" style="animation-delay:.05s">Embarquement</p>
+    <h1 class="font-serif text-4xl sm:text-6xl text-ivoire font-medium mt-3 hero-enter" style="animation-delay:.15s">Serez-vous du voyage ?</h1>
+    <p class="text-ivoire/85 text-sm sm:text-base mt-4 max-w-md mx-auto leading-relaxed hero-enter" style="animation-delay:.25s">
+      {site.coupleNames[0]} &amp; {site.coupleNames[1]} seraient heureux de vous compter parmi leurs passagers.
+    </p>
+    <p class="eyebrow text-ivoire/70 text-[11px] mt-3 hero-enter" style="animation-delay:.35s">Réponse souhaitée avant le {site.rsvpDeadlineLabel}</p>
+  </section>
+
+  <section class="px-4 sm:px-6 py-12 sm:py-16 bg-ivoire">
+    <div class="max-w-xl mx-auto">
+      <!-- progress -->
+      <div id="rsvp-progress" class="flex gap-1.5 mb-10" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+        <span data-progress-fill class="h-1 flex-1 bg-gris-piste/60 rounded-full overflow-hidden">
+          <span class="block h-full bg-or transition-all duration-500" style="width:0%"></span>
+        </span>
+      </div>
+
+      <form id="rsvp-form" class="space-y-8" novalidate>
+        <!-- honeypot anti-spam -->
+        <input type="text" name="website" id="website" class="hidden" tabindex="-1" autocomplete="off" />
+
+        <!-- STEP: identite -->
+        <fieldset data-step="identite" class="rsvp-step space-y-5">
+          <legend class="eyebrow text-sauge-deep text-xs mb-1">01 — Identité</legend>
+          <h2 class="font-serif text-2xl text-vert-chateau">Qui êtes-vous ?</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <label class="block">
+              <span class="text-xs text-ardoise/70">Prénom</span>
+              <input required name="firstName" type="text" autocomplete="given-name" class="rsvp-input" />
+            </label>
+            <label class="block">
+              <span class="text-xs text-ardoise/70">Nom</span>
+              <input required name="lastName" type="text" autocomplete="family-name" class="rsvp-input" />
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- STEP: participation -->
+        <fieldset data-step="participation" class="rsvp-step space-y-5" hidden>
+          <legend class="eyebrow text-sauge-deep text-xs mb-1">02 — Présence</legend>
+          <h2 class="font-serif text-2xl text-vert-chateau">À quels moments serez-vous des nôtres ?</h2>
+          <p class="text-xs text-ardoise/60 -mt-2">Décochez ce qui ne vous concerne pas. Laissez tout décoché si vous ne pourrez pas venir.</p>
+          <div class="space-y-3">
+            <label class="rsvp-check-card">
+              <input type="checkbox" name="joinCeremony" value="1" checked />
+              <span>Église — 16h30, Champcueil</span>
+            </label>
+            <label class="rsvp-check-card">
+              <input type="checkbox" name="joinCocktail" value="1" checked />
+              <span>Vin d'honneur — 18h00, Château de Nainville-les-Roches</span>
+            </label>
+            <label class="rsvp-check-card">
+              <input type="checkbox" name="joinDinner" value="1" checked />
+              <span>Repas — 19h30, dîner et soirée</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- STEP: voyageurs -->
+        <fieldset data-step="voyageurs" class="rsvp-step space-y-5" hidden>
+          <legend class="eyebrow text-sauge-deep text-xs mb-1">03 — Voyageurs</legend>
+          <h2 class="font-serif text-2xl text-vert-chateau">Combien serez-vous ?</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <label class="block">
+              <span class="text-xs text-ardoise/70">Adultes</span>
+              <input required name="adults" type="number" min="1" max="10" value="1" class="rsvp-input px-2.5" />
+            </label>
+            <label class="block">
+              <span class="text-xs text-ardoise/70">Enfants</span>
+              <input name="children" type="number" min="0" max="10" value="0" class="rsvp-input px-2.5" />
+            </label>
+            <label class="block">
+              <span class="text-xs text-ardoise/70">Bébés</span>
+              <input name="babies" type="number" min="0" max="10" value="0" class="rsvp-input px-2.5" />
+            </label>
+            <label class="block">
+              <span class="text-xs text-ardoise/70">Repas famille</span>
+              <select id="family-diet" class="rsvp-input px-2.5">
+                <option value="none" selected>Standard</option>
+                <option value="vegetarien">Végétarien</option>
+                <option value="halal">Halal</option>
+              </select>
+            </label>
+          </div>
+          <p class="text-xs text-ardoise/50 -mt-2">Les bébés restent avec leurs parents — pas besoin de préciser leur nom.</p>
+          <p class="text-xs text-ardoise/50 -mt-2">« Repas famille » applique ce choix à tout le monde par défaut — modifiable ensuite personne par personne ci-dessous.</p>
+          <input type="hidden" name="companions" id="companions-hidden" />
+          <input type="hidden" name="dietVegetarian" id="diet-vegetarian-hidden" />
+          <input type="hidden" name="dietVegetarianCount" id="diet-vegetarian-count-hidden" />
+          <input type="hidden" name="dietHalal" id="diet-halal-hidden" />
+          <input type="hidden" name="dietHalalCount" id="diet-halal-count-hidden" />
+          <input type="hidden" name="dietNotes" id="diet-notes-hidden" />
+          <div class="space-y-1.5 pt-3 border-t border-gris-piste">
+            <p class="font-serif text-sm text-vert-chateau font-semibold">Adulte 1</p>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="block">
+                <span class="text-xs text-ardoise/70">Prénom</span>
+                <input id="companion-self-first" type="text" class="rsvp-input bg-kraft/20 text-ardoise/70" disabled />
+              </label>
+              <label class="block">
+                <span class="text-xs text-ardoise/70">Nom</span>
+                <input id="companion-self-last" type="text" class="rsvp-input bg-kraft/20 text-ardoise/70" disabled />
+              </label>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="block">
+                <span class="text-xs text-ardoise/70">Repas</span>
+                <select id="companion-self-diet" class="rsvp-input">
+                  <option value="none" selected>Standard</option>
+                  <option value="vegetarien">Végétarien</option>
+                  <option value="halal">Halal</option>
+                </select>
+              </label>
+              <div class="block">
+                <span class="text-xs text-ardoise/70">Allergies (facultatif)</span>
+                <div class="mt-1.5 flex gap-2">
+                  <input id="companion-self-allergy" type="text" class="rsvp-input flex-1" style="margin-top:0" placeholder="Ex : noix" />
+                  <button type="button" id="companion-self-allergy-add" class="shrink-0 w-11 rounded-[2px] border border-gris-piste bg-ivoire text-lg text-vert-chateau hover:bg-vert-chateau hover:text-ivoire hover:border-vert-chateau transition-colors" aria-label="Ajouter cette allergie">+</button>
+                </div>
+              </div>
+            </div>
+            <div id="companion-self-allergy-chips" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div id="companions-list" class="space-y-4"></div>
+          <p id="companions-empty" class="text-xs text-ardoise/50 hidden">Ajoutez un adulte ou un enfant ci-dessus pour renseigner son nom.</p>
+        </fieldset>
+
+        <!-- STEP: complementaire -->
+        <fieldset data-step="complementaire" class="rsvp-step space-y-5" hidden>
+          <legend class="eyebrow text-sauge-deep text-xs mb-1">04 — Informations complémentaires</legend>
+          <h2 class="font-serif text-2xl text-vert-chateau">Autre chose à préciser ?</h2>
+          <label class="block">
+            <span class="text-xs text-ardoise/70">Transport / hébergement (facultatif)</span>
+            <textarea name="logistics" rows="2" class="rsvp-input" placeholder="Ex : je cherche un covoiturage depuis Paris"></textarea>
+          </label>
+        </fieldset>
+
+        <!-- STEP: message -->
+        <fieldset data-step="message" class="rsvp-step space-y-5" hidden>
+          <legend class="eyebrow text-sauge-deep text-xs mb-1">05 — Message</legend>
+          <h2 class="font-serif text-2xl text-vert-chateau">Un petit mot pour {site.coupleNames[0]} &amp; {site.coupleNames[1]} ?</h2>
+          <textarea name="message" rows="4" class="rsvp-input" placeholder="Facultatif"></textarea>
+        </fieldset>
+
+        <p id="rsvp-error" class="text-sm text-red-700 hidden" role="alert"></p>
+
+        <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+          <button type="button" id="rsvp-back" class="btn btn-outline border-vert-chateau text-vert-chateau hover:bg-vert-chateau hover:text-ivoire w-full sm:w-auto" hidden>
+            ← PRÉCÉDENT
+          </button>
+          <div class="hidden sm:block sm:flex-1"></div>
+          <button
+            type="button"
+            id="rsvp-next"
+            class="btn btn-solid bg-vert-chateau text-ivoire hover:bg-vert-chateau/90 hover:text-ivoire w-full sm:w-auto"
+          >
+            SUIVANT
+          </button>
+        </div>
+      </form>
+
+      <!-- confirmation -->
+      <div id="rsvp-confirmation" class="hidden text-center py-10" data-wedding-date={site.weddingDateShort}>
+        <svg viewBox="0 0 520 90" width="220" class="mx-auto mb-2 confirm-plane" fill="none" aria-hidden="true">
+          <path d="M10 70 C 160 10, 360 6, 500 40" stroke="#C9A45C" stroke-width="1.3" stroke-dasharray="4 7"/>
+          <path d="M488 30 l18 8 l-11 4 l-3 12 l-4 -14 z" fill="#C9A45C"/>
+        </svg>
+        <Stamp class="w-14 h-14 mx-auto mb-4 text-or confirm-stamp" />
+        <h2 class="font-serif text-3xl text-vert-chateau">Embarquement confirmé ✈</h2>
+        <p class="text-ardoise/70 mt-3">Rendez-vous le {site.weddingDateLabel}.</p>
+        <p id="boarding-announcement" class="hidden mt-8 max-w-md mx-auto text-xs text-sauge-deep italic">
+          📢 Dernier appel : les portes d'embarquement seront définitivement fermées 15 minutes avant le décollage.
+        </p>
+        <div id="boarding-passes" class="mt-4 max-w-xl mx-auto space-y-4"></div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .rsvp-input {
+    margin-top: 0.375rem;
+    width: 100%;
+    border: 1px solid var(--color-gris-piste);
+    background: var(--color-ivoire);
+    padding: 0.75rem 0.9rem;
+    font-size: 0.95rem;
+    color: var(--color-ardoise);
+    border-radius: 2px;
+  }
+  .rsvp-input:focus {
+    outline: 2px solid var(--color-or);
+    outline-offset: 1px;
+    border-color: var(--color-or);
+  }
+  .rsvp-radio-card,
+  .rsvp-check-card {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1px solid var(--color-gris-piste);
+    padding: 0.9rem 1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--color-ardoise);
+  }
+  .rsvp-radio-card:has(input:checked),
+  .rsvp-check-card:has(input:checked) {
+    border-color: var(--color-or);
+    background: color-mix(in srgb, var(--color-or) 8%, transparent);
+  }
+  .rsvp-step[hidden] { display: none; }
+  .rsvp-step {
+    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .rsvp-step.is-leaving-forward { opacity: 0; transform: translateX(-18px); }
+  .rsvp-step.is-leaving-back { opacity: 0; transform: translateX(18px); }
+  .rsvp-step.is-entering-forward { opacity: 0; transform: translateX(18px); }
+  .rsvp-step.is-entering-back { opacity: 0; transform: translateX(-18px); }
+
+  .rsvp-radio-card, .rsvp-check-card {
+    transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+  }
+  .rsvp-radio-card:active, .rsvp-check-card:active { transform: scale(0.98); }
+
+  #rsvp-confirmation.is-visible .confirm-plane { animation: confirm-fly 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  #rsvp-confirmation.is-visible .confirm-stamp { animation: confirm-stamp-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both; }
+  .boarding-pass { animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--bp-delay, 0.7s); }
+
+  @keyframes confirm-fly {
+    from { opacity: 0; transform: translateX(-24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes confirm-stamp-in {
+    from { opacity: 0; transform: scale(0.5) rotate(-12deg); }
+    to { opacity: 1; transform: scale(1) rotate(-8deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rsvp-step, .rsvp-radio-card, .rsvp-check-card, .boarding-pass,
+    #rsvp-confirmation.is-visible .confirm-plane, #rsvp-confirmation.is-visible .confirm-stamp {
+      transition: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<script>
+  import schedule from "../../data/schedule.json";
+
+  const scheduleSteps = schedule.saturday.steps;
+
+  type Answers = Record<string, string>;
+
+  const NAME_RE = /^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/;
+  function isValidName(v: string): boolean {
+    return NAME_RE.test(v.trim());
+  }
+
+  const form = document.getElementById("rsvp-form") as HTMLFormElement;
+  const nextBtn = document.getElementById("rsvp-next") as HTMLButtonElement;
+  const backBtn = document.getElementById("rsvp-back") as HTMLButtonElement;
+  const errorEl = document.getElementById("rsvp-error") as HTMLElement;
+  const confirmation = document.getElementById("rsvp-confirmation") as HTMLElement;
+  const progressFill = document.querySelector("#rsvp-progress span span") as HTMLElement;
+
+  const allSteps = ["identite", "participation", "voyageurs", "complementaire", "message"];
+  const eventFields = ["joinCeremony", "joinCocktail", "joinDinner"];
+
+  const adultsInput = form.querySelector('[name="adults"]') as HTMLInputElement;
+  const childrenInput = form.querySelector('[name="children"]') as HTMLInputElement;
+  const babiesInput = form.querySelector('[name="babies"]') as HTMLInputElement;
+  const companionsList = document.getElementById("companions-list") as HTMLElement;
+  const companionsHidden = document.getElementById("companions-hidden") as HTMLInputElement;
+  const companionsEmpty = document.getElementById("companions-empty") as HTMLElement;
+  const companionSelfFirst = document.getElementById("companion-self-first") as HTMLInputElement;
+  const companionSelfLast = document.getElementById("companion-self-last") as HTMLInputElement;
+  const companionSelfDiet = document.getElementById("companion-self-diet") as HTMLSelectElement;
+  const companionSelfAllergy = document.getElementById("companion-self-allergy") as HTMLInputElement;
+  const companionSelfAllergyAdd = document.getElementById("companion-self-allergy-add") as HTMLButtonElement;
+  const companionSelfAllergyChips = document.getElementById("companion-self-allergy-chips") as HTMLElement;
+
+  function getCombinedAllergy(chipsEl: HTMLElement): string {
+    return Array.from(chipsEl.querySelectorAll<HTMLElement>("[data-chip]"))
+      .map((c) => c.dataset.chip || "")
+      .join(", ");
+  }
+
+  function setupAllergyWidget(entryInput: HTMLInputElement, addBtn: HTMLButtonElement, chipsContainer: HTMLElement, onChange: () => void) {
+    function addChip(value: string) {
+      const v = value.trim();
+      if (!v) return;
+      const chip = document.createElement("span");
+      chip.dataset.chip = v;
+      chip.className = "inline-flex items-center gap-1.5 border-l-2 border-or bg-or/10 pl-2.5 pr-1.5 py-1 text-xs text-vert-chateau";
+      const label = document.createElement("span");
+      label.textContent = `⚠ ${v}`;
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.textContent = "×";
+      removeBtn.className = "text-vert-chateau/60 hover:text-vert-chateau font-semibold leading-none px-1";
+      removeBtn.setAttribute("aria-label", `Retirer ${v}`);
+      removeBtn.addEventListener("click", () => {
+        chip.remove();
+        onChange();
+      });
+      chip.append(label, removeBtn);
+      chipsContainer.appendChild(chip);
+      entryInput.value = "";
+      onChange();
+    }
+
+    function setFromCombined(combined: string) {
+      chipsContainer.innerHTML = "";
+      combined
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .forEach(addChip);
+    }
+
+    addBtn.addEventListener("click", () => addChip(entryInput.value));
+    entryInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        addChip(entryInput.value);
+      }
+    });
+
+    return { setFromCombined };
+  }
+
+  const selfAllergyWidget = setupAllergyWidget(companionSelfAllergy, companionSelfAllergyAdd, companionSelfAllergyChips, syncCompanionsHidden);
+  const familyDietSelect = document.getElementById("family-diet") as HTMLSelectElement;
+  const dietVegetarianHidden = document.getElementById("diet-vegetarian-hidden") as HTMLInputElement;
+  const dietVegetarianCountHidden = document.getElementById("diet-vegetarian-count-hidden") as HTMLInputElement;
+  const dietHalalHidden = document.getElementById("diet-halal-hidden") as HTMLInputElement;
+  const dietHalalCountHidden = document.getElementById("diet-halal-count-hidden") as HTMLInputElement;
+  const dietNotesHidden = document.getElementById("diet-notes-hidden") as HTMLInputElement;
+
+  const dynamicInputClass =
+    "mt-1.5 w-full rounded-[2px] border border-gris-piste bg-ivoire px-3.5 py-3 text-[0.95rem] text-ardoise focus:border-or focus:outline-none";
+
+  function clampAdults() {
+    const v = parseInt(adultsInput.value, 10);
+    if (adultsInput.value === "" || isNaN(v) || v < 1) adultsInput.value = "1";
+  }
+
+  function syncCompanionsHidden() {
+    const names = Array.from(companionsList.querySelectorAll<HTMLElement>("[data-companion-row]"))
+      .map((row) => {
+        const first = (row.querySelector(".companion-first") as HTMLInputElement).value.trim();
+        const last = (row.querySelector(".companion-last") as HTMLInputElement).value.trim();
+        return [first, last].filter(Boolean).join(" ");
+      })
+      .filter(Boolean);
+    companionsHidden.value = names.join(", ");
+
+    let vegCount = 0;
+    let halalCount = 0;
+    const notes: string[] = [];
+    const collect = (first: string, last: string, diet: string, allergy: string) => {
+      const name = [first.trim(), last.trim()].filter(Boolean).join(" ") || "—";
+      if (diet === "vegetarien") vegCount++;
+      if (diet === "halal") halalCount++;
+      const parts: string[] = [];
+      if (diet === "vegetarien") parts.push("Végétarien");
+      if (diet === "halal") parts.push("Halal");
+      if (allergy.trim()) parts.push(`allergie : ${allergy.trim()}`);
+      if (parts.length) notes.push(`${name} — ${parts.join(", ")}`);
+    };
+    collect(companionSelfFirst.value, companionSelfLast.value, companionSelfDiet.value, getCombinedAllergy(companionSelfAllergyChips));
+    companionsList.querySelectorAll<HTMLElement>("[data-companion-row]").forEach((row) => {
+      collect(
+        (row.querySelector(".companion-first") as HTMLInputElement).value,
+        (row.querySelector(".companion-last") as HTMLInputElement).value,
+        (row.querySelector(".companion-diet") as HTMLSelectElement).value,
+        getCombinedAllergy(row.querySelector(".companion-allergy-chips") as HTMLElement)
+      );
+    });
+    dietVegetarianHidden.value = vegCount > 0 ? "1" : "";
+    dietVegetarianCountHidden.value = String(vegCount);
+    dietHalalHidden.value = halalCount > 0 ? "1" : "";
+    dietHalalCountHidden.value = String(halalCount);
+    dietNotesHidden.value = notes.join("; ");
+  }
+
+  type CompanionCache = { first: string; last: string; diet: string; allergy: string };
+
+  function addCompanionRow(type: "adult" | "child", index: number, label: string, cache: Record<string, CompanionCache>) {
+    const cached = cache[`${type}-${index}`] || { first: "", last: "", diet: familyDietSelect.value, allergy: "" };
+    const row = document.createElement("div");
+    row.dataset.companionRow = "";
+    row.dataset.type = type;
+    row.dataset.index = String(index);
+    row.className = "space-y-1.5";
+
+    const labelP = document.createElement("p");
+    labelP.className = "font-serif text-sm text-vert-chateau font-semibold pt-3 border-t border-gris-piste";
+    labelP.textContent = label;
+
+    const grid = document.createElement("div");
+    grid.className = "grid grid-cols-2 gap-3";
+
+    const makeField = (fieldLabel: string, className: string, value: string) => {
+      const lbl = document.createElement("label");
+      lbl.className = "block";
+      const span = document.createElement("span");
+      span.className = "text-xs text-ardoise/70";
+      span.textContent = fieldLabel;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = `${dynamicInputClass} ${className}`;
+      input.value = value;
+      input.addEventListener("input", syncCompanionsHidden);
+      lbl.append(span, input);
+      return lbl;
+    };
+
+    const dietGrid = document.createElement("div");
+    dietGrid.className = "grid grid-cols-2 gap-3";
+
+    const dietLbl = document.createElement("label");
+    dietLbl.className = "block";
+    const dietSpan = document.createElement("span");
+    dietSpan.className = "text-xs text-ardoise/70";
+    dietSpan.textContent = "Repas";
+    const dietSelect = document.createElement("select");
+    dietSelect.className = `${dynamicInputClass} companion-diet`;
+    dietSelect.innerHTML = `
+      <option value="none">Standard</option>
+      <option value="vegetarien">Végétarien</option>
+      <option value="halal">Halal</option>
+    `;
+    dietSelect.value = cached.diet || "none";
+    dietSelect.addEventListener("change", syncCompanionsHidden);
+    dietLbl.append(dietSpan, dietSelect);
+
+    const allergyWrap = document.createElement("div");
+    allergyWrap.className = "block";
+    const allergySpan = document.createElement("span");
+    allergySpan.className = "text-xs text-ardoise/70";
+    allergySpan.textContent = "Allergies (facultatif)";
+    const allergyRow = document.createElement("div");
+    allergyRow.className = "mt-1.5 flex gap-2";
+    const allergyInput = document.createElement("input");
+    allergyInput.type = "text";
+    allergyInput.placeholder = "Ex : noix";
+    allergyInput.className = `${dynamicInputClass} companion-allergy flex-1`;
+    allergyInput.style.marginTop = "0";
+    const allergyAddBtn = document.createElement("button");
+    allergyAddBtn.type = "button";
+    allergyAddBtn.textContent = "+";
+    allergyAddBtn.setAttribute("aria-label", "Ajouter cette allergie");
+    allergyAddBtn.className =
+      "shrink-0 w-11 rounded-[2px] border border-gris-piste bg-ivoire text-lg text-vert-chateau hover:bg-vert-chateau hover:text-ivoire hover:border-vert-chateau transition-colors";
+    allergyRow.append(allergyInput, allergyAddBtn);
+    allergyWrap.append(allergySpan, allergyRow);
+
+    dietGrid.append(dietLbl, allergyWrap);
+
+    const allergyChips = document.createElement("div");
+    allergyChips.className = "companion-allergy-chips flex flex-wrap gap-1.5";
+    setupAllergyWidget(allergyInput, allergyAddBtn, allergyChips, syncCompanionsHidden).setFromCombined(cached.allergy || "");
+
+    grid.append(makeField("Prénom", "companion-first", cached.first), makeField("Nom", "companion-last", cached.last));
+    row.append(labelP, grid, dietGrid, allergyChips);
+    companionsList.appendChild(row);
+  }
+
+  function renderCompanions() {
+    const firstName = (form.querySelector('[name="firstName"]') as HTMLInputElement)?.value.trim();
+    const lastName = (form.querySelector('[name="lastName"]') as HTMLInputElement)?.value.trim();
+    companionSelfFirst.value = firstName || "";
+    companionSelfLast.value = lastName || "";
+
+    const adults = parseInt(adultsInput.value, 10) || 0;
+    const children = parseInt(childrenInput.value, 10) || 0;
+    const neededAdultRows = Math.max(0, adults - 1);
+    const neededChildRows = Math.max(0, children);
+
+    const cache: Record<string, CompanionCache> = {};
+    companionsList.querySelectorAll<HTMLElement>("[data-companion-row]").forEach((row) => {
+      cache[`${row.dataset.type}-${row.dataset.index}`] = {
+        first: (row.querySelector(".companion-first") as HTMLInputElement).value,
+        last: (row.querySelector(".companion-last") as HTMLInputElement).value,
+        diet: (row.querySelector(".companion-diet") as HTMLSelectElement).value,
+        allergy: (row.querySelector(".companion-allergy") as HTMLInputElement).value,
+      };
+    });
+
+    companionsList.innerHTML = "";
+    for (let i = 0; i < neededAdultRows; i++) addCompanionRow("adult", i, `Adulte ${i + 2}`, cache);
+    for (let i = 0; i < neededChildRows; i++) addCompanionRow("child", i, `Enfant ${i + 1}`, cache);
+
+    companionsEmpty.classList.toggle("hidden", neededAdultRows + neededChildRows > 0);
+    syncCompanionsHidden();
+  }
+
+  adultsInput?.addEventListener("input", () => {
+    const v = parseInt(adultsInput.value, 10);
+    if (adultsInput.value !== "" && !isNaN(v) && v < 1) adultsInput.value = "1";
+    renderCompanions();
+  });
+  adultsInput?.addEventListener("blur", () => {
+    clampAdults();
+    renderCompanions();
+  });
+  childrenInput?.addEventListener("input", renderCompanions);
+
+  companionSelfDiet?.addEventListener("change", syncCompanionsHidden);
+
+  familyDietSelect?.addEventListener("change", () => {
+    companionSelfDiet.value = familyDietSelect.value;
+    companionsList.querySelectorAll<HTMLSelectElement>(".companion-diet").forEach((sel) => {
+      sel.value = familyDietSelect.value;
+    });
+    syncCompanionsHidden();
+  });
+
+  function getAnswers(): Answers {
+    const data = new FormData(form);
+    const out: Answers = {};
+    data.forEach((v, k) => (out[k] = String(v)));
+    return out;
+  }
+
+  function isAttending(): boolean {
+    return eventFields.some((name) => form.querySelector<HTMLInputElement>(`[name="${name}"]`)?.checked);
+  }
+
+  function visibleSteps(): string[] {
+    if (!isAttending()) return ["identite", "participation", "message"];
+    return ["identite", "participation", "voyageurs", "complementaire", "message"];
+  }
+
+  let currentIndex = 0;
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function currentSteps() {
+    return visibleSteps();
+  }
+
+  function showStep(id: string, direction: "forward" | "back" = "forward", animate = true) {
+    const steps = currentSteps();
+    const nextEl = form.querySelector<HTMLElement>(`[data-step="${id}"]`);
+    const currentEl = allSteps
+      .map((s) => form.querySelector<HTMLElement>(`[data-step="${s}"]`))
+      .find((el) => el && !el.hidden && el !== nextEl);
+
+    const finish = () => {
+      allSteps.forEach((s) => {
+        const el = form.querySelector<HTMLElement>(`[data-step="${s}"]`);
+        if (el) el.hidden = s !== id;
+      });
+      currentIndex = steps.indexOf(id);
+      backBtn.hidden = currentIndex <= 0;
+      nextBtn.textContent = currentIndex === steps.length - 1 ? "CONFIRMER MON EMBARQUEMENT" : "SUIVANT";
+      const pct = ((currentIndex + 1) / steps.length) * 100;
+      if (progressFill) progressFill.style.width = `${pct}%`;
+      errorEl.classList.add("hidden");
+
+      if (id === "voyageurs") renderCompanions();
+
+      if (nextEl && animate && !prefersReduced) {
+        nextEl.classList.add(direction === "forward" ? "is-entering-forward" : "is-entering-back");
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            nextEl.classList.remove("is-entering-forward", "is-entering-back");
+          });
+        });
+      }
+    };
+
+    if (currentEl && animate && !prefersReduced) {
+      currentEl.classList.add(direction === "forward" ? "is-leaving-forward" : "is-leaving-back");
+      window.setTimeout(() => {
+        currentEl.classList.remove("is-leaving-forward", "is-leaving-back");
+        finish();
+      }, 260);
+    } else {
+      finish();
+    }
+  }
+
+  function clearFieldError(field: HTMLElement) {
+    field.classList.remove("field-invalid");
+    field.style.borderColor = "";
+    const next = field.nextElementSibling;
+    if (next && next.classList.contains("field-error-msg")) next.remove();
+  }
+
+  function clearStepFieldErrors(scope: HTMLElement) {
+    scope.querySelectorAll<HTMLElement>(".field-invalid").forEach(clearFieldError);
+  }
+
+  function markFieldInvalid(field: HTMLInputElement, message: string) {
+    field.classList.add("field-invalid");
+    field.style.borderColor = "#dc2626";
+    const next = field.nextElementSibling;
+    if (!(next && next.classList.contains("field-error-msg"))) {
+      const msg = document.createElement("p");
+      msg.className = "field-error-msg text-xs text-red-600 mt-1";
+      msg.textContent = message;
+      field.insertAdjacentElement("afterend", msg);
+    }
+  }
+
+  form.addEventListener("input", (e) => {
+    const t = e.target as HTMLElement;
+    if (t.classList && t.classList.contains("field-invalid")) clearFieldError(t);
+  });
+
+  function validateStep(id: string): boolean {
+    const el = form.querySelector<HTMLElement>(`[data-step="${id}"]`);
+    if (!el) return true;
+    clearStepFieldErrors(el);
+    errorEl.classList.add("hidden");
+
+    const required = Array.from(el.querySelectorAll<HTMLInputElement>("[required]"));
+    let firstInvalid: HTMLInputElement | null = null;
+    for (const field of required) {
+      if (field.type === "radio") {
+        const group = el.querySelectorAll<HTMLInputElement>(`[name="${field.name}"]`);
+        if (![...group].some((g) => g.checked)) {
+          errorEl.textContent = "Merci de répondre à cette question avant de continuer.";
+          errorEl.classList.remove("hidden");
+          return false;
+        }
+      } else if (!field.value.trim()) {
+        markFieldInvalid(field, "Ce champ doit être renseigné.");
+        if (!firstInvalid) firstInvalid = field;
+      }
+    }
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return false;
+    }
+
+    if (id === "identite") {
+      const firstName = form.querySelector<HTMLInputElement>('[name="firstName"]');
+      const lastName = form.querySelector<HTMLInputElement>('[name="lastName"]');
+      let invalid = false;
+      for (const field of [firstName, lastName]) {
+        if (field && !isValidName(field.value)) {
+          markFieldInvalid(field, "Lettres uniquement, pas de chiffres ni de caractères spéciaux.");
+          if (!firstInvalid) firstInvalid = field;
+          invalid = true;
+        }
+      }
+      if (invalid) {
+        firstInvalid?.focus();
+        return false;
+      }
+    }
+
+    if (id === "voyageurs") {
+      clampAdults();
+      if ((parseInt(adultsInput.value, 10) || 0) < 1) {
+        markFieldInvalid(adultsInput, "Il doit y avoir au moins 1 adulte.");
+        adultsInput.focus();
+        return false;
+      }
+
+      const companionFields = companionsList.querySelectorAll<HTMLInputElement>(".companion-first, .companion-last");
+      let invalidCompanion: HTMLInputElement | null = null;
+      for (const field of Array.from(companionFields)) {
+        if (!isValidName(field.value)) {
+          markFieldInvalid(field, "Ce champ doit être renseigné (lettres uniquement).");
+          if (!invalidCompanion) invalidCompanion = field;
+        }
+      }
+      if (invalidCompanion) {
+        invalidCompanion.focus();
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  type PassengerType = "adult" | "child" | "baby";
+
+  const PLANE_PATH =
+    "M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2.5 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z";
+
+  function dietLabelFor(diet: string | null): string {
+    if (diet === "vegetarien") return "Végétarien";
+    if (diet === "halal") return "Halal";
+    if (diet === "none") return "Standard";
+    return "—";
+  }
+
+  function buildBoardingPass(
+    firstName: string,
+    lastName: string,
+    type: PassengerType,
+    diet: string | null,
+    boardingTime: string,
+    delay: number
+  ): HTMLElement {
+    const isBaby = type === "baby";
+    const typeLabel = type === "adult" ? "Adulte" : type === "child" ? "Enfant" : "Bébé";
+    const date = confirmation.dataset.weddingDate || "";
+
+    const bg = isBaby ? "var(--color-or-clair)" : "var(--color-ivoire)";
+    const barcodeGradient =
+      "repeating-linear-gradient(90deg, var(--color-vert-chateau) 0px, var(--color-vert-chateau) 2px, transparent 2px, transparent 5px, var(--color-vert-chateau) 5px, var(--color-vert-chateau) 7px, transparent 7px, transparent 9px, var(--color-vert-chateau) 9px, var(--color-vert-chateau) 12px, transparent 12px, transparent 16px, var(--color-vert-chateau) 16px, var(--color-vert-chateau) 17px, transparent 17px, transparent 22px)";
+
+    const card = document.createElement("div");
+    card.className = `boarding-pass relative flex overflow-hidden border ${isBaby ? "border-or/50 bg-or/5" : "border-vert-chateau/25 bg-ivoire"}`;
+    card.style.setProperty("--bp-delay", `${delay}s`);
+
+    card.innerHTML = `
+      <div class="absolute top-0 left-0 right-0 h-1.5" style="background:linear-gradient(90deg, var(--color-vert-chateau), var(--color-or-clair), var(--color-vert-chateau))"></div>
+
+      <div class="flex-1 min-w-0 p-5 pt-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1">
+            <span style="display:inline-block;width:13px;height:32px;background:#1e3a5f;transform:skewX(-18deg)"></span>
+            <span style="display:inline-block;width:5px;height:32px;background:#1e3a5f;transform:skewX(-18deg)"></span>
+            <span style="display:inline-block;width:5px;height:32px;background:#ffffff;border-left:1px solid #d8dcd3;border-right:1px solid #d8dcd3;transform:skewX(-18deg)"></span>
+            <span style="display:inline-block;width:5px;height:32px;background:#b23a2f;transform:skewX(-18deg)"></span>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-weight:900;font-size:1.5rem;letter-spacing:0.01em;margin-left:0.5rem"><span style="color:#1e3a5f">AIR</span> <span style="color:#b23a2f">LR</span></p>
+          </div>
+          <svg viewBox="0 0 24 24" class="w-5 h-5" style="color:#b23a2f;transform:rotate(35deg)" fill="currentColor" aria-hidden="true"><path d="${PLANE_PATH}"/></svg>
+        </div>
+
+        <div class="flex items-center justify-between mt-4 gap-2">
+          <div>
+            <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.12em]">Départ</p>
+            <p class="font-serif text-base sm:text-lg text-vert-chateau font-semibold leading-tight">Château</p>
+          </div>
+          <div class="flex-1 flex items-center px-1">
+            <span class="flex-1 border-t border-dashed border-or/70"></span>
+            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-or mx-1 shrink-0" fill="currentColor" aria-hidden="true"><path d="${PLANE_PATH}"/></svg>
+            <span class="flex-1 border-t border-dashed border-or/70"></span>
+          </div>
+          <div class="text-right">
+            <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.12em]">Arrivée</p>
+            <p class="font-serif text-base sm:text-lg text-vert-chateau font-semibold leading-tight">Pour toujours</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-dashed border-vert-chateau/20">
+          <div>
+            <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.12em]">${isBaby ? "🍼 Prénom" : "Prénom"}</p>
+            <p class="font-serif text-lg text-vert-chateau font-semibold leading-tight truncate">${firstName}</p>
+          </div>
+          <div>
+            <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.12em]">Nom</p>
+            <p class="font-serif text-lg text-vert-chateau font-semibold leading-tight truncate">${lastName}</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-3 text-center">
+          <div class="border border-vert-chateau/15 py-1.5">
+            <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.1em]">Statut</p>
+            <p class="text-xs text-vert-chateau font-medium mt-0.5">${typeLabel}</p>
+          </div>
+          <div class="border border-vert-chateau/15 py-1.5">
+            <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.1em]">Date</p>
+            <p class="text-xs text-vert-chateau font-medium mt-0.5">${date}</p>
+          </div>
+        </div>
+
+        ${isBaby ? `<p class="mt-3 text-xs text-sauge-deep italic">Dans les bras de ses parents, sans réservation de siège.</p>` : ""}
+
+        <div class="mt-4 h-7" style="opacity:0.5;background-repeat:repeat-x;background-image:${barcodeGradient}" aria-hidden="true"></div>
+      </div>
+
+      <div class="relative w-0 shrink-0" aria-hidden="true">
+        <span class="absolute inset-y-0 left-0 border-l border-dashed border-vert-chateau/25"></span>
+        <span class="absolute -left-[7px] -top-[7px] w-3.5 h-3.5 rounded-full" style="background:${bg}"></span>
+        <span class="absolute -left-[7px] -bottom-[7px] w-3.5 h-3.5 rounded-full" style="background:${bg}"></span>
+      </div>
+
+      <div class="w-24 sm:w-28 shrink-0 p-4 flex flex-col items-center text-center justify-between">
+        <p class="eyebrow text-sauge-deep text-[8px] leading-tight">Boarding<br/>pass</p>
+        <div>
+          <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.1em]">Régime</p>
+          <p class="font-serif text-sm text-vert-chateau font-semibold leading-tight mt-0.5">${isBaby ? "—" : dietLabelFor(diet)}</p>
+        </div>
+        <div>
+          <p class="text-[9px] text-ardoise/50 uppercase tracking-[0.1em]">Embarq.</p>
+          <p class="font-serif text-lg text-or font-semibold leading-tight mt-0.5">${boardingTime}</p>
+        </div>
+      </div>
+    `;
+
+    return card;
+  }
+
+  function computeBoardingTime(answers: Answers): string {
+    const order: { key: string; title: string }[] = [
+      { key: "joinCeremony", title: "Cérémonie" },
+      { key: "joinCocktail", title: "Vin d'honneur" },
+      { key: "joinDinner", title: "Dîner" },
+    ];
+    for (const step of order) {
+      if (answers[step.key] === "1") {
+        const match = scheduleSteps.find((s: { title: string; time: string }) => s.title === step.title);
+        if (match) return match.time;
+      }
+    }
+    return "—";
+  }
+
+  async function submitForm() {
+    nextBtn.disabled = true;
+    nextBtn.textContent = "ENVOI EN COURS…";
+    const answers = getAnswers();
+    try {
+      const res = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(answers),
+      });
+      if (!res.ok) throw new Error("request-failed");
+      form.classList.add("hidden");
+      document.getElementById("rsvp-progress")?.classList.add("hidden");
+      confirmation.classList.remove("hidden");
+      requestAnimationFrame(() => confirmation.classList.add("is-visible"));
+
+      const passesContainer = document.getElementById("boarding-passes");
+      if (passesContainer) {
+        const boardingTime = computeBoardingTime(answers);
+        const people: { first: string; last: string; type: PassengerType; diet: string | null }[] = [];
+
+        const selfFirst = (answers.firstName ?? "").trim();
+        const selfLast = (answers.lastName ?? "").trim();
+        if (selfFirst || selfLast) people.push({ first: selfFirst, last: selfLast, type: "adult", diet: companionSelfDiet.value });
+
+        companionsList.querySelectorAll<HTMLElement>("[data-companion-row]").forEach((row) => {
+          const first = (row.querySelector(".companion-first") as HTMLInputElement).value.trim();
+          const last = (row.querySelector(".companion-last") as HTMLInputElement).value.trim();
+          const diet = (row.querySelector(".companion-diet") as HTMLSelectElement | null)?.value ?? "none";
+          if (first || last) people.push({ first, last, type: row.dataset.type === "child" ? "child" : "adult", diet });
+        });
+
+        const babiesCount = parseInt(babiesInput?.value || "0", 10) || 0;
+        for (let i = 0; i < babiesCount; i++) people.push({ first: `Bébé ${i + 1}`, last: "", type: "baby", diet: null });
+
+        passesContainer.innerHTML = "";
+        people.forEach((p, i) =>
+          passesContainer.appendChild(buildBoardingPass(p.first, p.last, p.type, p.diet, boardingTime, 0.7 + i * 0.15))
+        );
+        document.getElementById("boarding-announcement")?.classList.remove("hidden");
+      }
+    } catch {
+      errorEl.textContent = "Une erreur est survenue. Merci de réessayer, ou de nous écrire directement.";
+      errorEl.classList.remove("hidden");
+      nextBtn.disabled = false;
+      nextBtn.textContent = "CONFIRMER MON EMBARQUEMENT";
+    }
+  }
+
+  nextBtn.addEventListener("click", () => {
+    const steps = currentSteps();
+    const stepId = steps[currentIndex];
+    if (!validateStep(stepId)) return;
+    if (currentIndex === steps.length - 1) {
+      submitForm();
+      return;
+    }
+    showStep(steps[currentIndex + 1], "forward");
+  });
+
+  backBtn.addEventListener("click", () => {
+    const steps = currentSteps();
+    if (currentIndex > 0) showStep(steps[currentIndex - 1], "back");
+  });
+
+  renderCompanions();
+  showStep("identite", "forward", false);
+</script>

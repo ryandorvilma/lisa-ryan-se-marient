@@ -1,0 +1,47 @@
+{
+  "_comment": "Rubrique 'Préparer votre voyage'. Chaque bloc = une catégorie. Remplacez les [placeholders] par vos infos réelles (hôtels, etc.).",
+  "categories": [
+    {
+      "id": "sy-rendre",
+      "title": "S'y rendre",
+      "icon": "map-pin",
+      "text": "Le Château de Nainville-les-Roches se trouve à <strong class=\"text-vert-chateau font-semibold\">environ 35 km au sud de Paris</strong>, dans l'Essonne. Un plan d'accès détaillé (voiture, covoiturage) sera envoyé aux invités confirmés avant l'événement.",
+      "cta": { "label": "Voir l'itinéraire", "href": "https://www.google.com/maps/search/?api=1&query=Ch%C3%A2teau+de+Nainville-les-Roches" }
+    },
+    {
+      "id": "dormir",
+      "title": "Dormir",
+      "icon": "bed",
+      "text": "<strong class=\"text-vert-chateau font-semibold\">Six adresses</strong> à quelques minutes du château, du plus économique au plus confortable.",
+      "cta": { "label": "Voir les hébergements", "href": "/hebergements" }
+    },
+    {
+      "id": "dress-code",
+      "title": "Dress code",
+      "icon": "shirt",
+      "text": "Soyez libres, avec le sourire. Une <strong class=\"text-vert-chateau font-semibold\">tenue élégante de cérémonie</strong> suffit amplement — pensez simplement à des chaussures confortables pour profiter des jardins du château.",
+      "cta": null
+    },
+    {
+      "id": "enfants",
+      "title": "Enfants",
+      "icon": "baby",
+      "text": "Les enfants sont les bienvenus. <strong class=\"text-vert-chateau font-semibold\">Des animatrices seront présentes</strong> pour s'occuper d'eux et des repas adaptés seront prévus. Merci de nous indiquer leur nombre et leur âge dans le formulaire de réponse afin d'adapter l'organisation.",
+      "cta": null
+    },
+    {
+      "id": "liste-de-mariage",
+      "title": "Liste de mariage",
+      "icon": "gift",
+      "text": "<strong class=\"text-vert-chateau font-semibold\">Le plus beau des cadeaux, c'est votre présence</strong> à nos côtés. Si vous souhaitez néanmoins nous gâter, une cagnotte en ligne sera bientôt disponible — nous vous tiendrons informés.",
+      "cta": null
+    },
+    {
+      "id": "bon-a-savoir",
+      "title": "Bon à savoir",
+      "icon": "info",
+      "text": "Merci de confirmer votre présence avant le <strong class=\"text-or font-semibold\">14 février 2027</strong>. Pour toute question, contactez Lisa ou Ryan directement ou écrivez à <a href=\"mailto:ryan.lisa.dorvilma@gmail.com\" class=\"underline decoration-vert-chateau/40 hover:text-vert-chateau\">ryan.lisa.dorvilma@gmail.com</a>.",
+      "cta": null
+    }
+  ]
+}
