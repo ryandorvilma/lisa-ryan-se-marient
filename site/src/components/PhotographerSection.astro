@@ -7,51 +7,82 @@ const photographer = {
   instagram: "https://www.instagram.com/kekorangel/",
   instagramHandle: "@kekorangel",
   website: "https://www.kekorangelphoto.com/",
-  photo: "/images/photographe.jpg",
+  photos: [
+    { src: "/images/photographe-1.jpg", alt: "Photographie de Kekor Angel" },
+    { src: "/images/photographe-2.jpg", alt: "Photographie de Kekor Angel" },
+    { src: "/images/photographe-3.jpg", alt: "Photographie de Kekor Angel" },
+  ],
 };
 ---
 
-<section id="photographe" class="relative bg-kraft scroll-mt-20 texture-grain overflow-hidden">
+<section id="photographe" class="relative bg-vert-chateau scroll-mt-20 texture-grain overflow-hidden">
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3">
+    {photographer.photos.map((photo, i) => (
+      <div
+        class:list={[
+          "photographe-photo aspect-[4/5] sm:aspect-auto sm:h-[70vh] bg-kraft/20 flex items-center justify-center overflow-hidden",
+          i === 1 && "hidden sm:flex",
+          i === 2 && "hidden lg:flex",
+        ]}
+      >
+        {publicFileExists(photo.src) ? (
+          <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" class="w-full h-full object-cover" />
+        ) : (
+          <span class="text-ivoire/40 text-xs px-6 text-center">[ {photo.alt} ]</span>
+        )}
+      </div>
+    ))}
+  </div>
+
   <div class="px-6 sm:px-10 py-16 sm:py-20 text-center reveal">
-    <p class="eyebrow text-sauge-deep text-xs sm:text-base">Notre photographe</p>
-    <h2 class="font-serif text-4xl sm:text-6xl text-vert-chateau font-medium mt-3 max-w-2xl mx-auto">
+    <p class="eyebrow text-or-clair text-xs sm:text-base">Notre photographe</p>
+    <h2 class="font-serif text-4xl sm:text-6xl text-ivoire font-medium mt-3 max-w-2xl mx-auto">
       {photographer.name}
     </h2>
-
-    {publicFileExists(photographer.photo) && (
-      <img
-        src={photographer.photo}
-        alt={`Portrait de ${photographer.name}, photographe`}
-        loading="lazy"
-        decoding="async"
-        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mt-8 ring-2 ring-or ring-offset-4 ring-offset-kraft"
-      />
-    )}
-
-    <p class="mt-8 max-w-xl mx-auto text-ardoise/85 text-sm sm:text-base leading-relaxed">
-      Un talent exceptionnel, un regard rare. Chaque instant de cette journée sera capturé par ses
-      images — découvrez son univers et suivez son travail.
-    </p>
 
     <a
       href={photographer.instagram}
       target="_blank"
       rel="noopener"
-      class="inline-flex items-center gap-2 mt-6 text-vert-chateau hover:text-or transition-colors text-sm sm:text-base"
+      class="inline-flex items-center gap-2 mt-4 text-or-clair hover:text-ivoire transition-colors text-sm sm:text-base"
     >
       <Icon name="instagram" class="w-5 h-5 sm:w-6 sm:h-6" />
       {photographer.instagramHandle}
     </a>
 
-    <div class="mt-8">
-      <a
-        href={photographer.website}
-        target="_blank"
-        rel="noopener"
-        class="btn btn-solid inline-flex sm:text-sm sm:py-4 sm:px-8"
-      >
-        DÉCOUVRIR SON TRAVAIL
-      </a>
-    </div>
+    <p class="mt-8 max-w-xl mx-auto text-ivoire/85 text-sm sm:text-base leading-relaxed">
+      Un talent exceptionnel, un regard rare. Chaque instant de cette journée sera capturé par ses
+      images — découvrez son univers et suivez son travail.
+    </p>
+
+    <a
+      href={photographer.website}
+      target="_blank"
+      rel="noopener"
+      class="btn btn-solid inline-flex mt-10 sm:text-sm sm:py-4 sm:px-8"
+    >
+      DÉCOUVRIR SON TRAVAIL
+    </a>
   </div>
 </section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReduced) {
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll<HTMLElement>(".photographe-photo").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { scale: 1.12 },
+        {
+          scale: 1,
+          ease: "none",
+          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 0.8 },
+        }
+      );
+    });
+  }
+</script>
