@@ -1,0 +1,56 @@
+---
+import { publicFileExists } from "../lib/media";
+import Icon from "./Icon.astro";
+
+const photographer = {
+  name: "Kekor Angel",
+  instagram: "https://www.instagram.com/kekorangel/",
+  instagramHandle: "@kekorangel",
+  photo: "/images/photographe.jpg",
+};
+---
+
+<section id="photographe" class="relative bg-kraft scroll-mt-20 texture-grain overflow-hidden">
+  <div class="px-6 sm:px-10 py-16 sm:py-20 text-center reveal">
+    <p class="eyebrow text-sauge-deep text-xs sm:text-base">Notre photographe</p>
+    <h2 class="font-serif text-4xl sm:text-6xl text-vert-chateau font-medium mt-3 max-w-2xl mx-auto">
+      {photographer.name}
+    </h2>
+
+    {publicFileExists(photographer.photo) && (
+      <img
+        src={photographer.photo}
+        alt={`Portrait de ${photographer.name}, photographe`}
+        loading="lazy"
+        decoding="async"
+        class="w-40 h-40 sm:w-52 sm:h-52 rounded-full object-cover mx-auto mt-8 ring-2 ring-or ring-offset-4 ring-offset-kraft"
+      />
+    )}
+
+    <p class="mt-8 max-w-xl mx-auto text-ardoise/85 text-sm sm:text-base leading-relaxed">
+      Un talent exceptionnel, un regard rare. Chaque instant de cette journée sera capturé par ses
+      images — découvrez son univers et suivez son travail.
+    </p>
+
+    <a
+      href={photographer.instagram}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex items-center gap-2 mt-6 text-vert-chateau hover:text-or transition-colors text-sm sm:text-base"
+    >
+      <Icon name="instagram" class="w-5 h-5 sm:w-6 sm:h-6" />
+      {photographer.instagramHandle}
+    </a>
+
+    <div class="mt-8">
+      <a
+        href={photographer.instagram}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-solid inline-flex sm:text-sm sm:py-4 sm:px-8"
+      >
+        DÉCOUVRIR SON TRAVAIL
+      </a>
+    </div>
+  </div>
+</section>
