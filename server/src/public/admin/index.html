@@ -13,9 +13,28 @@
     <button id="logout-btn" type="button">Se déconnecter</button>
   </div>
 
-  <main>
-    <div class="stats-grid" id="stats-grid"></div>
+  <nav class="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="dashboard" class="active">Tableau de bord</button>
+    <button type="button" role="tab" data-tab="responses">Réponses</button>
+    <button type="button" role="tab" data-tab="seating">Plan de table</button>
+  </nav>
 
+  <main id="tab-dashboard" class="tab-panel">
+    <section class="kpis" id="kpis"></section>
+    <h3 class="section-title">Effectifs par moment de la journée</h3>
+    <div class="table-wrap">
+      <table class="headcount">
+        <thead><tr><th></th><th>Adultes</th><th>Enfants</th><th>Bébés</th><th>Total personnes</th><th>Places assises</th></tr></thead>
+        <tbody id="headcount-body"></tbody>
+      </table>
+    </div>
+    <h3 class="section-title">Repas du dîner (traiteur)</h3>
+    <section class="kpis small" id="meals"></section>
+    <h3 class="section-title">Plan de table</h3>
+    <section class="kpis small" id="seating-summary"></section>
+  </main>
+
+  <main id="tab-responses" class="tab-panel hidden">
     <div class="toolbar">
       <input type="search" id="search-input" placeholder="Rechercher un invité (nom, prénom)…" />
       <a class="export-btn" href="/admin/api/export.csv">Export CSV</a>
@@ -37,6 +56,35 @@
       <tbody id="responses-body"></tbody>
     </table>
     <p id="empty-state" class="hidden" style="color:#8a8a80; padding: 20px 0;">Aucune réponse pour le moment.</p>
+  </main>
+
+  <main id="tab-seating" class="tab-panel seating hidden">
+    <div class="toolbar">
+      <form id="add-table-form" class="add-table">
+        <input id="new-table-name" placeholder="Nom de la table (ex. Table 1, Les Témoins…)" required maxlength="60" />
+        <input id="new-table-capacity" type="number" min="1" max="30" value="8" title="Places" aria-label="Nombre de places" />
+        <button type="submit">+ Ajouter</button>
+      </form>
+      <button type="button" id="bulk-tables-btn">Créer plusieurs tables…</button>
+      <button type="button" id="create-kids-btn">🧸 Créer l'espace enfants</button>
+      <button type="button" id="send-kids-btn" class="hidden">🧸 Tous les enfants → espace enfants</button>
+      <a class="export-btn" href="/admin/api/seating.xlsx">Export Excel</a>
+      <button type="button" onclick="window.print()">Imprimer</button>
+    </div>
+    <p class="hint">Glissez un invité (ou le nom d'une famille pour la déplacer entière) sur une table. Sur mobile : touchez un invité puis une table. Les bébés restent avec leurs parents et n'occupent pas de place (chaise haute). Avec un espace enfants, une famille déposée sur une table y installe les adultes et envoie automatiquement ses enfants dans l'espace enfants.</p>
+    <div class="seating-layout">
+      <aside class="pool dropzone" data-table-id="">
+        <div class="pool-head">
+          <strong>Non placés <span id="unassigned-count"></span></strong>
+          <input type="search" id="pool-search" placeholder="Filtrer…" />
+        </div>
+        <div id="pool-list"></div>
+      </aside>
+      <div class="tables-col">
+        <section id="kids-space" class="kids-space hidden"></section>
+        <section class="tables-grid" id="tables-grid"></section>
+      </div>
+    </div>
   </main>
 
   <div class="modal-backdrop hidden" id="modal-backdrop">
@@ -117,5 +165,6 @@
   </div>
 
   <script src="/admin/app.js"></script>
+  <script src="/admin/seating.js"></script>
 </body>
 </html>

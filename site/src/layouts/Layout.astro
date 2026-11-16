@@ -18,7 +18,8 @@ const {
   ogImage = site.ogImage,
 } = Astro.props;
 
-const pageTitle = `${title} — ${site.coupleNames.join(" & ")}`;
+const coupleTitle = site.coupleNames.join(" & ");
+const pageTitle = title === coupleTitle ? coupleTitle : `${title} — ${coupleTitle}`;
 const canonicalURL = new URL(Astro.url.pathname, site.siteUrl);
 const ogImageURL = new URL(ogImage, site.siteUrl);
 ---

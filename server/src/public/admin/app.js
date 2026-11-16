@@ -9,28 +9,75 @@ async function checkAuth() {
   }
 }
 
+const card = ([label, value, sub]) =>
+  `<div class="stat-card"><div class="value">${value}</div><div class="label">${label}</div>${sub ? `<div class="sub">${sub}</div>` : ""}</div>`;
+
 async function loadStats() {
-  const res = await fetch("/admin/api/stats");
-  const s = await res.json();
-  const cards = [
-    ["Contactés", s.total],
-    ["Confirmés", s.confirmed],
-    ["Refus", s.declined],
-    ["Adultes", s.adults],
-    ["Enfants", s.children],
-    ["Bébés", s.babies],
-    ["Église", s.ceremony],
-    ["Vin d'honneur", s.cocktail],
-    ["Repas", s.dinner],
-    ["Escale gourmande", s.brunch],
-    ["Repas végétariens", s.vegetarian],
-    ["Repas halal", s.halal],
-    ["Régimes signalés", s.withDietary],
+  const [hc, seating] = await Promise.all([
+    fetch("/admin/api/headcount").then((r) => r.json()),
+    fetch("/admin/api/seating").then((r) => r.json()),
+  ]);
+  const g = hc.events.global;
+  document.getElementById("kpis").innerHTML = [
+    ["Personnes attendues", g.total, `${g.adults} adultes · ${g.children} enfants · ${g.babies} bébés`],
+    ["Réponses « présent »", hc.responses.confirmed, `${hc.responses.total} réponses reçues`],
+    ["Réponses « absent »", hc.responses.declined],
+    ["Au dîner", hc.events.dinner.total, `${hc.events.dinner.seats} places assises`],
+  ]
+    .map(card)
+    .join("");
+
+  const rows = [
+    ["Église", hc.events.ceremony],
+    ["Vin d'honneur", hc.events.cocktail],
+    ["Dîner & soirée", hc.events.dinner],
+    ["Escale gourmande", hc.events.brunch],
   ];
-  document.getElementById("stats-grid").innerHTML = cards
-    .map(([label, value]) => `<div class="stat-card"><div class="value">${value}</div><div class="label">${label}</div></div>`)
+  document.getElementById("headcount-body").innerHTML = rows
+    .map(([label, e]) => `<tr><th>${label}</th><td>${e.adults}</td><td>${e.children}</td><td>${e.babies}</td><td><strong>${e.total}</strong></td><td>${e.seats}</td></tr>`)
+    .join("");
+
+  const m = hc.meals;
+  document.getElementById("meals").innerHTML = [
+    ["Standard (adultes + enfants)", m.standard],
+    ["Végétariens", m.vegetarian],
+    ["Halal", m.halal],
+    ["Menus enfants", m.childMenus],
+    ["Chaises hautes", m.highChairs],
+    ["Allergies signalées", m.allergies],
+  ]
+    .map(card)
+    .join("");
+
+  const seated = seating.persons.filter((p) => p.type !== "baby");
+  const placed = seated.filter((p) => p.tableId).length;
+  const kids = seating.tables.find((t) => t.kind === "kids");
+  const regular = seating.tables.filter((t) => t.kind !== "kids");
+  const capacity = regular.reduce((s, t) => s + t.capacity, 0);
+  // avec un espace enfants, les enfants ne prennent pas de place aux tables des adultes
+  const needTable = kids ? seated.filter((p) => p.type === "adult" || (p.tableId && p.tableId !== kids.id)).length : seated.length;
+  const inKids = kids ? seating.persons.filter((p) => p.tableId === kids.id).length : 0;
+  const totalChildren = seated.filter((p) => p.type === "child").length;
+  document.getElementById("seating-summary").innerHTML = [
+    ["Tables", regular.length],
+    ["Places aux tables", capacity, capacity < needTable ? `⚠ il manque ${needTable - capacity} places` : `${needTable} nécessaires`],
+    ["Espace enfants", kids ? `${inKids} / ${totalChildren}` : "—", kids ? "enfants placés" : "pas encore créé"],
+    ["Invités placés", `${placed} / ${seated.length}`],
+    ["Restant à placer", seated.length - placed],
+  ]
+    .map(card)
     .join("");
 }
+
+// ---------- onglets ----------
+function showTab(name) {
+  document.querySelectorAll(".tabs [data-tab]").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab-panel").forEach((p) => p.classList.toggle("hidden", p.id !== `tab-${name}`));
+  try { localStorage.setItem("admin-tab", name); } catch {}
+  if (name === "dashboard") loadStats();
+  if (name === "seating" && window.loadSeating) window.loadSeating();
+}
+document.querySelectorAll(".tabs [data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
 
 function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -139,11 +186,16 @@ document.getElementById("edit-form").addEventListener("submit", async (e) => {
     logistics: document.getElementById("edit-logistics").value,
     message: document.getElementById("edit-message").value,
   };
-  await fetch(`/admin/api/responses/${id}`, {
+  const res = await fetch(`/admin/api/responses/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    alert(data.error || "Enregistrement impossible.");
+    return;
+  }
   closeModal();
   await Promise.all([loadStats(), loadResponses(document.getElementById("search-input").value)]);
 });
@@ -169,5 +221,8 @@ document.getElementById("logout-btn").addEventListener("click", async () => {
 
 (async function init() {
   await checkAuth();
-  await Promise.all([loadStats(), loadResponses()]);
+  await loadResponses();
+  let tab = "dashboard";
+  try { tab = localStorage.getItem("admin-tab") || tab; } catch {}
+  showTab(["dashboard", "responses", "seating"].includes(tab) ? tab : "dashboard");
 })();

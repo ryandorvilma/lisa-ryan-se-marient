@@ -4,6 +4,7 @@ import rateLimit from "express-rate-limit";
 import ExcelJS from "exceljs";
 import { db, listResponses, getResponse, updateResponse, deleteResponse, getStats } from "../db.js";
 import { requireAuth } from "../auth.js";
+import { getSeating, createTable, updateTable, deleteTable, tableExists, assignSeats, getHeadcount } from "../seating.js";
 
 export const adminRouter = Router();
 
@@ -44,6 +45,82 @@ adminRouter.use(requireAuth);
 
 adminRouter.get("/stats", (_req, res) => {
   res.json(getStats());
+});
+
+adminRouter.get("/headcount", (_req, res) => {
+  res.json(getHeadcount());
+});
+
+// ---------- Plan de table ----------
+function parseTable(b) {
+  const name = String(b?.name ?? "").trim().slice(0, 60);
+  const kind = b?.kind === "kids" ? "kids" : "table";
+  // l'espace enfants peut accueillir beaucoup plus de monde qu'une table
+  const capacity = Math.max(1, Math.min(kind === "kids" ? 150 : 30, parseInt(b?.capacity, 10) || 8));
+  const notes = String(b?.notes ?? "").slice(0, 200);
+  return { name, capacity, notes, kind };
+}
+
+adminRouter.get("/seating", (_req, res) => {
+  res.json(getSeating());
+});
+
+adminRouter.post("/tables", (req, res) => {
+  const t = parseTable(req.body);
+  if (!t.name) return res.status(400).json({ error: "Nom de table requis." });
+  const r = createTable(t);
+  res.status(201).json({ id: r.lastInsertRowid });
+});
+
+adminRouter.put("/tables/:id", (req, res) => {
+  const current = db.prepare(`SELECT kind FROM seating_tables WHERE id = ?`).get(req.params.id);
+  if (!current) return res.status(404).json({ error: "Table introuvable." });
+  const t = parseTable({ ...req.body, kind: current.kind });
+  if (!t.name) return res.status(400).json({ error: "Nom de table requis." });
+  updateTable(req.params.id, t);
+  res.json({ ok: true });
+});
+
+adminRouter.delete("/tables/:id", (req, res) => {
+  deleteTable(req.params.id);
+  res.json({ ok: true });
+});
+
+adminRouter.put("/seating/assign", (req, res) => {
+  const keys = Array.isArray(req.body?.keys) ? req.body.keys.map(String).filter((k) => /^\d+:[acb]\d+$/.test(k)).slice(0, 50) : [];
+  const tableId = req.body?.tableId == null ? null : parseInt(req.body.tableId, 10);
+  if (!keys.length) return res.status(400).json({ error: "Aucun invité." });
+  if (tableId !== null && !tableExists(tableId)) return res.status(404).json({ error: "Table introuvable." });
+  assignSeats(keys, tableId);
+  res.json({ ok: true });
+});
+
+adminRouter.get("/seating.xlsx", async (_req, res) => {
+  const { tables, persons } = getSeating();
+  const typeLabel = { adult: "Adulte", child: "Enfant", baby: "Bébé" };
+  const wb = new ExcelJS.Workbook();
+  const sheet = wb.addWorksheet("Plan de table");
+  sheet.columns = [
+    { header: "Table", key: "table", width: 22 },
+    { header: "Invité", key: "name", width: 30 },
+    { header: "Type", key: "type", width: 10 },
+    { header: "Famille", key: "family", width: 26 },
+    { header: "Régime / allergies", key: "diet", width: 36 },
+  ];
+  sheet.getRow(1).font = { bold: true };
+  const byTable = new Map(tables.map((t) => [t.id, t.name]));
+  const sorted = [...persons].sort((a, b) => {
+    const ia = a.tableId ? tables.findIndex((t) => t.id === a.tableId) : 1e9;
+    const ib = b.tableId ? tables.findIndex((t) => t.id === b.tableId) : 1e9;
+    return ia - ib || a.family.localeCompare(b.family, "fr");
+  });
+  sorted.forEach((p) =>
+    sheet.addRow({ table: p.tableId ? byTable.get(p.tableId) : "— Non placé —", name: p.name, type: typeLabel[p.type], family: p.family, diet: p.diet })
+  );
+  res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  res.setHeader("Content-Disposition", 'attachment; filename="plan-de-table-lisa-ryan.xlsx"');
+  await wb.xlsx.write(res);
+  res.end();
 });
 
 adminRouter.get("/responses", (req, res) => {

@@ -28,7 +28,15 @@ const DATE_RE = /^(\d{4})(\d{2})(\d{2})?(?:_(.+))?\.(jpe?g|png|webp)$/i;
 const frDayMonth = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long" });
 const frMonth = new Intl.DateTimeFormat("fr-FR", { month: "long" });
 
+// Corrections orthographiques (accents impossibles/risqués dans les noms de fichiers)
+const CAPTION_FIXES: Record<string, string> = {
+  PremiereAmour: "Premier amour",
+  Retrouvaille: "Retrouvailles",
+  Fiancaille: "Fiançailles",
+};
+
 function humanizeCaption(raw: string): string {
+  if (CAPTION_FIXES[raw]) return CAPTION_FIXES[raw];
   return raw
     .replace(/_/g, " ")
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")

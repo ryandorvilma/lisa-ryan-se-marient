@@ -22,7 +22,7 @@ calendarRouter.get("/calendar.ics", (_req, res) => {
     `DTEND:${formatICSDate(end.toISOString())}`,
     "SUMMARY:Mariage de Lisa & Ryan",
     "DESCRIPTION:Cérémonie 16h30 (Église de Champcueil)\\, vin d'honneur 18h\\, dîner 19h30.",
-    "LOCATION:Château de Nainville-les-Roches\\, 97150 Nainville-les-Roches",
+    "LOCATION:Château de Nainville-les-Roches\\, 91750 Nainville-les-Roches",
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");

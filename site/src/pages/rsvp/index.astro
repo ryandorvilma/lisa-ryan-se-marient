@@ -827,7 +827,10 @@ import Stamp from "../../components/Stamp.astro";
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(answers),
       });
-      if (!res.ok) throw new Error("request-failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(typeof data?.error === "string" ? data.error : "request-failed");
+      }
       form.classList.add("hidden");
       document.getElementById("rsvp-progress")?.classList.add("hidden");
       confirmation.classList.remove("hidden");
@@ -858,8 +861,9 @@ import Stamp from "../../components/Stamp.astro";
         );
         document.getElementById("boarding-announcement")?.classList.remove("hidden");
       }
-    } catch {
-      errorEl.textContent = "Une erreur est survenue. Merci de réessayer, ou de nous écrire directement.";
+    } catch (err) {
+      const serverMsg = err instanceof Error && err.message !== "request-failed" ? err.message : null;
+      errorEl.textContent = serverMsg ?? "Une erreur est survenue. Merci de réessayer, ou de nous écrire directement.";
       errorEl.classList.remove("hidden");
       nextBtn.disabled = false;
       nextBtn.textContent = "CONFIRMER MON EMBARQUEMENT";
